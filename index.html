@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Super TGDQ Bros: O Desafio dos Dados - SENAI</title>
+    <title>Super TGDQ Bros: O Desafio dos Dados - SENAI (10 Fases)</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts Pixel & Game Style -->
@@ -14,7 +14,7 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #0f172a;
+            background-color: #090d16;
             color: #f8fafc;
             user-select: none;
             overflow-x: hidden;
@@ -30,8 +30,8 @@
         canvas {
             image-rendering: pixelated;
             image-rendering: crisp-edges;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
-            background-color: #5c94fc;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.7), 0 8px 10px -6px rgba(0, 0, 0, 0.7);
+            background-color: #1e293b;
         }
 
         /* Touch Control Buttons styling */
@@ -115,12 +115,12 @@
             </div>
             <div>
                 <h1 class="font-pixel text-xs sm:text-sm md:text-base text-yellow-400 tracking-wider">SUPER TGDQ BROS</h1>
-                <p class="text-xs text-slate-400 font-tech">SENAI • Tratamento e Gerenciamento de Dados Quantitativos</p>
+                <p class="text-xs text-slate-400 font-tech">SENAI • Tratamento e Gerenciamento de Dados Quantitativos (10 Fases)</p>
             </div>
         </div>
         <div class="flex items-center gap-2">
             <span class="bg-blue-900/60 border border-blue-500/30 text-blue-300 text-xs px-3 py-1 rounded-full font-semibold">
-                <i class="fa-solid fa-graduation-cap mr-1"></i> Assistente Administrativo
+                <i class="fa-solid fa-graduation-cap mr-1"></i> Aprendizagem Industrial
             </span>
             <button id="soundToggleBtn" onclick="toggleAudio()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 p-2 rounded-lg border border-slate-700 transition" title="Ativar/Desativar Som">
                 <i id="soundIcon" class="fa-solid fa-volume-high text-yellow-400"></i>
@@ -132,14 +132,15 @@
     <main class="w-full max-w-5xl flex flex-col items-center justify-center relative my-auto">
         
         <!-- HUD / GAME STATS BAR -->
-        <div id="gameHud" class="w-full bg-slate-900/90 border-t-2 border-x-2 border-slate-700 rounded-t-xl p-2 sm:p-3 flex flex-wrap justify-between items-center gap-2 text-xs sm:text-sm font-pixel text-slate-200">
+        <div id="gameHud" class="w-full bg-slate-900/95 border-t-2 border-x-2 border-slate-700 rounded-t-xl p-2 sm:p-3 flex flex-wrap justify-between items-center gap-2 text-xs sm:text-sm font-pixel text-slate-200">
             <div class="flex items-center space-x-3">
                 <span class="text-red-400 flex items-center gap-1" id="hudLives"><i class="fa-solid fa-heart"></i> x3</span>
                 <span class="text-yellow-400 flex items-center gap-1" id="hudCoins"><i class="fa-solid fa-coins"></i> 00</span>
                 <span class="text-sky-400" id="hudScore">PTS: 0000</span>
             </div>
             <div class="flex items-center space-x-3">
-                <span id="hudLevelName" class="text-emerald-400 font-semibold">FASE 1: O Reino dos Dados Brutos</span>
+                <span id="hudAccuracy" class="text-emerald-400"><i class="fa-solid fa-bullseye"></i> 100%</span>
+                <span id="hudLevelName" class="text-yellow-300 font-semibold">FASE 1/10</span>
                 <span class="text-slate-400" id="hudTimer"><i class="fa-regular fa-clock"></i> 300s</span>
             </div>
         </div>
@@ -152,22 +153,23 @@
             <!-- START SCREEN OVERLAY -->
             <div id="startScreen" class="absolute inset-0 bg-slate-950/95 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center z-20">
                 <div class="animate-bounce mb-3">
-                    <span class="inline-block bg-yellow-500 text-slate-950 font-pixel px-4 py-2 rounded-md text-xs sm:text-sm shadow-lg font-bold">EDIÇÃO SENAI 2026</span>
+                    <span class="inline-block bg-yellow-500 text-slate-950 font-pixel px-4 py-2 rounded-md text-xs sm:text-sm shadow-lg font-bold">EDIÇÃO OFICIAL SENAI - 10 FASES</span>
                 </div>
                 <h2 class="font-pixel text-xl sm:text-3xl text-yellow-400 mb-2 drop-shadow-md">SUPER TGDQ BROS</h2>
-                <p class="font-tech text-lg text-slate-300 max-w-xl mb-4">
-                    Embarque no ciclo: <span class="text-sky-400 font-bold">DADO &rarr; TRATAMENTO &rarr; ANÁLISE &rarr; INDICADOR &rarr; INTERPRETAÇÃO &rarr; DECISÃO &rarr; AÇÃO</span>.
+                <p class="font-tech text-base sm:text-lg text-slate-300 max-w-xl mb-4">
+                    Domine as 10 etapas da Unidade Curricular e percorra o Fio Condutor:<br>
+                    <span class="text-sky-400 font-bold">DADO &rarr; TRATAMENTO &rarr; ANÁLISE &rarr; INDICADOR &rarr; INTERPRETAÇÃO &rarr; DECISÃO &rarr; AÇÃO</span>
                 </p>
 
                 <!-- AVATAR SELECTION -->
                 <div class="mb-5 w-full max-w-md bg-slate-900 border border-slate-800 p-3 rounded-xl">
                     <p class="text-xs font-pixel text-slate-400 mb-2">ESCOLHA SEU ANALISTA DE DADOS:</p>
                     <div class="flex justify-center gap-4">
-                        <button onclick="selectAvatar('alex')" id="btnAvatarAlex" class="avatar-btn border-2 border-yellow-400 bg-slate-800 p-2 rounded-lg flex items-center space-x-2 transition">
+                        <button onclick="selectAvatar('alex')" id="btnAvatarAlex" class="avatar-btn border-2 border-yellow-400 bg-slate-800 p-2.5 rounded-lg flex items-center space-x-2 transition">
                             <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-xs">👨‍💼</div>
                             <span class="text-xs font-semibold">Alex (Analista)</span>
                         </button>
-                        <button onclick="selectAvatar('beatriz')" id="btnAvatarBeatriz" class="avatar-btn border-2 border-transparent bg-slate-800 p-2 rounded-lg flex items-center space-x-2 transition">
+                        <button onclick="selectAvatar('beatriz')" id="btnAvatarBeatriz" class="avatar-btn border-2 border-transparent bg-slate-800 p-2.5 rounded-lg flex items-center space-x-2 transition">
                             <div class="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center text-white font-bold text-xs">👩‍💼</div>
                             <span class="text-xs font-semibold">Beatriz (Auditora)</span>
                         </button>
@@ -176,7 +178,7 @@
 
                 <div class="flex flex-col sm:flex-row gap-3">
                     <button onclick="startGame()" class="font-pixel bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-6 py-3 rounded-xl shadow-lg border-b-4 border-emerald-700 active:translate-y-1 transition text-sm sm:text-base font-bold">
-                        <i class="fa-solid fa-play mr-2"></i> INICIAR DESAFIO
+                        <i class="fa-solid fa-play mr-2"></i> INICIAR JOGO
                     </button>
                     <button onclick="toggleInstructionsModal(true)" class="font-pixel bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-3 rounded-xl border border-slate-600 text-xs sm:text-sm">
                         <i class="fa-solid fa-book-open mr-2"></i> INSTRUÇÕES
@@ -203,8 +205,9 @@
             </div>
             <!-- ACTION BUTTONS -->
             <div class="flex gap-3">
-                <button id="btnJump" class="action-btn w-14 h-14 rounded-full text-white font-pixel text-xs flex items-center justify-center">
-                    PULO
+                <button id="btnJump" class="action-btn w-14 h-14 rounded-full text-white font-pixel text-xs flex flex-col items-center justify-center">
+                    <span>PULO</span>
+                    <span class="text-[9px] opacity-80">(x2)</span>
                 </button>
             </div>
         </div>
@@ -220,11 +223,11 @@
                 <i class="fa-solid fa-circle-info"></i> Como Jogar?
             </h3>
             <ul class="text-sm space-y-2 text-slate-300">
-                <li><i class="fa-solid fa-keyboard text-sky-400 mr-2"></i> <strong>Teclado:</strong> Use as Setas (<kbd class="bg-slate-800 px-1 border border-slate-600 rounded">←</kbd> <kbd class="bg-slate-800 px-1 border border-slate-600 rounded">→</kbd>) ou <kbd class="bg-slate-800 px-1 border border-slate-600 rounded">A</kbd>/<kbd class="bg-slate-800 px-1 border border-slate-600 rounded">D</kbd> para mover. Tecla <kbd class="bg-slate-800 px-1 border border-slate-600 rounded">Espaço</kbd>, <kbd class="bg-slate-800 px-1 border border-slate-600 rounded">↑</kbd> ou <kbd class="bg-slate-800 px-1 border border-slate-600 rounded">W</kbd> para pular.</li>
-                <li><i class="fa-solid fa-mobile-screen text-sky-400 mr-2"></i> <strong>Touch:</strong> Utilize os botões virtuais na tela.</li>
-                <li><i class="fa-solid fa-cubes text-yellow-400 mr-2"></i> <strong>Blocos de Pergunta (?):</strong> Pule por baixo para responder aos desafios conceituais de TGDQ. Cada acerto soma pontos!</li>
-                <li><i class="fa-solid fa-bug text-red-400 mr-2"></i> <strong>Bugs / Dados Corrompidos:</strong> Pule em cima dos inimigos para eliminá-los ou desvie.</li>
-                <li><i class="fa-solid fa-flag-checkered text-emerald-400 mr-2"></i> <strong>Objetivo:</strong> Complete as 3 fases, vença o Chefão na Fase 3 e gere o seu Relatório de Desempenho para enviar ao instrutor!</li>
+                <li><i class="fa-solid fa-keyboard text-sky-400 mr-2"></i> <strong>Movimento:</strong> Setas (<kbd class="bg-slate-800 px-1 border border-slate-600 rounded">←</kbd> <kbd class="bg-slate-800 px-1 border border-slate-600 rounded">→</kbd>) ou <kbd class="bg-slate-800 px-1 border border-slate-600 rounded">A</kbd>/<kbd class="bg-slate-800 px-1 border border-slate-600 rounded">D</kbd>.</li>
+                <li><i class="fa-solid fa-angles-up text-emerald-400 mr-2"></i> <strong>Pulo Duplo (Double Jump):</strong> Pressione <kbd class="bg-slate-800 px-1 border border-slate-600 rounded">Espaço</kbd>, <kbd class="bg-slate-800 px-1 border border-slate-600 rounded">↑</kbd> ou <kbd class="bg-slate-800 px-1 border border-slate-600 rounded">W</kbd> duas vezes para dar um pulo extra mais alto!</li>
+                <li><i class="fa-solid fa-cubes text-yellow-400 mr-2"></i> <strong>Blocos '?':</strong> Pule por baixo para desbloquear desafios de TGDQ e somar pontos!</li>
+                <li><i class="fa-solid fa-bug text-red-400 mr-2"></i> <strong>Bugs de Dados:</strong> Pule em cima dos inimigos para eliminá-los ou se esquive.</li>
+                <li><i class="fa-solid fa-flag-checkered text-emerald-400 mr-2"></i> <strong>10 Fases Completas:</strong> Conclua a jornada até a Fase 10 e gere seu Relatório Executivo para o Google Drive!</li>
             </ul>
             <div class="text-center pt-2">
                 <button onclick="toggleInstructionsModal(false)" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold px-5 py-2 rounded-lg text-sm">Entendido!</button>
@@ -241,7 +244,7 @@
                     DESAFIO TGDQ
                 </span>
                 <span id="quizLevelBadge" class="text-xs text-slate-400 font-tech font-bold uppercase">
-                    Fase 1
+                    FASE 1/10
                 </span>
             </div>
 
@@ -279,11 +282,11 @@
                     </div>
                     <div>
                         <h2 class="text-lg sm:text-2xl font-bold font-tech text-yellow-400">RELATÓRIO DE DESEMPENHO EXECUTIVO</h2>
-                        <p class="text-xs text-slate-400">Unidade Curricular: Tratamento e Gerenciamento de Dados Quantitativos (TGDQ)</p>
+                        <p class="text-xs text-slate-400">Tratamento e Gerenciamento de Dados Quantitativos (TGDQ) - SENAI</p>
                     </div>
                 </div>
                 <div id="certificationSeal" class="bg-gradient-to-r from-amber-500 to-yellow-600 text-slate-950 font-pixel text-xs px-3 py-2 rounded-lg shadow font-bold text-center">
-                    SELO DE APROVAÇÃO SENAI
+                    CERTIFICAÇÃO TGDQ
                 </div>
             </div>
 
@@ -303,56 +306,41 @@
             </div>
 
             <!-- RESUMO MÉTRICAS DE JOGO -->
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-center">
                 <div class="bg-slate-800/50 border border-slate-700 p-3 rounded-xl">
-                    <span class="block text-xs text-slate-400">Pontuação Total</span>
-                    <span id="repTotalScore" class="text-xl font-bold font-pixel text-yellow-400">0</span>
+                    <span class="block text-[10px] text-slate-400 uppercase">Nota Final</span>
+                    <span id="repGrade" class="text-2xl font-bold font-pixel text-emerald-400">10.0</span>
                 </div>
                 <div class="bg-slate-800/50 border border-slate-700 p-3 rounded-xl">
-                    <span class="block text-xs text-slate-400">Taxa de Acerto</span>
-                    <span id="repAccuracy" class="text-xl font-bold font-pixel text-emerald-400">0%</span>
+                    <span class="block text-[10px] text-slate-400 uppercase">Pontuação</span>
+                    <span id="repTotalScore" class="text-lg font-bold font-pixel text-yellow-400">0</span>
                 </div>
                 <div class="bg-slate-800/50 border border-slate-700 p-3 rounded-xl">
-                    <span class="block text-xs text-slate-400">Moedas de Dados</span>
-                    <span id="repCoins" class="text-xl font-bold font-pixel text-sky-400">0</span>
+                    <span class="block text-[10px] text-slate-400 uppercase">Precisão %</span>
+                    <span id="repAccuracy" class="text-lg font-bold font-pixel text-sky-400">0%</span>
                 </div>
                 <div class="bg-slate-800/50 border border-slate-700 p-3 rounded-xl">
-                    <span class="block text-xs text-slate-400">Tempo Total</span>
-                    <span id="repTime" class="text-xl font-bold font-pixel text-purple-400">0s</span>
+                    <span class="block text-[10px] text-slate-400 uppercase">Moedas</span>
+                    <span id="repCoins" class="text-lg font-bold font-pixel text-amber-400">0</span>
+                </div>
+                <div class="bg-slate-800/50 border border-slate-700 p-3 rounded-xl col-span-2 sm:col-span-1">
+                    <span class="block text-[10px] text-slate-400 uppercase">Tempo Total</span>
+                    <span id="repTime" class="text-lg font-bold font-pixel text-purple-400">0s</span>
                 </div>
             </div>
 
-            <!-- DETALHAMENTO POR MÓDULO DO PCA -->
+            <!-- DETALHAMENTO DAS 10 FASES -->
             <div class="space-y-2">
-                <h4 class="text-xs font-pixel text-slate-300 uppercase"><i class="fa-solid fa-layer-group mr-1"></i> Desempenho por Módulo de Conhecimento</h4>
-                <div class="space-y-2 text-xs sm:text-sm">
-                    <div class="bg-slate-800/40 p-2.5 rounded-lg flex justify-between items-center border border-slate-700/50">
-                        <span>Fase 1: Fundamentos, OLTP/OLAP e Auditoria</span>
-                        <span id="mod1Perf" class="font-bold text-sky-400">0/4 Acertos</span>
-                    </div>
-                    <div class="bg-slate-800/40 p-2.5 rounded-lg flex justify-between items-center border border-slate-700/50">
-                        <span>Fase 2: Planilhas (PROCV, SE) e Estatística Descritiva</span>
-                        <span id="mod2Perf" class="font-bold text-emerald-400">0/4 Acertos</span>
-                    </div>
-                    <div class="bg-slate-800/40 p-2.5 rounded-lg flex justify-between items-center border border-slate-700/50">
-                        <span>Fase 3: KPIs, DW, Decisão Estratégica & Estudo de Caso</span>
-                        <span id="mod3Perf" class="font-bold text-purple-400">0/4 Acertos</span>
-                    </div>
+                <h4 class="text-xs font-pixel text-slate-300 uppercase"><i class="fa-solid fa-list-check mr-1"></i> Desempenho por Fase (1 a 10)</h4>
+                <div id="repLevelBreakdown" class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                    <!-- Dynamic level stats injected -->
                 </div>
             </div>
 
-            <!-- LOG DE PERGUNTAS E RECOMENDAÇÕES PEDAGÓGICAS -->
-            <div class="space-y-2">
-                <h4 class="text-xs font-pixel text-slate-300 uppercase"><i class="fa-solid fa-clipboard-check mr-1"></i> Histórico de Respostas & Recomendações</h4>
-                <div id="repQuestionLog" class="max-h-48 overflow-y-auto space-y-2 border border-slate-800 p-2 rounded-xl bg-slate-950/50 text-xs">
-                    <!-- Log Injected Dynamic -->
-                </div>
-            </div>
-
-            <!-- FIO CONDUTOR VALIDAÇÃO FINAL -->
-            <div class="bg-blue-950/40 border border-blue-800/50 p-3 rounded-xl text-xs text-blue-200">
-                <p class="font-bold mb-1"><i class="fa-solid fa-diagram-project mr-1"></i> Domínio do Fio Condutor TGDQ:</p>
-                <p>O aluno demonstrou capacidade prática de transformar <strong>DADOS</strong> brutos em <strong>INFORMAÇÕES</strong> tratadas, calculando <strong>INDICADORES</strong> estratégicos para orientar <strong>INTERPRETAÇÕES</strong> e tomadas de <strong>DECISÃO</strong> na rotina administrativa.</p>
+            <!-- PARECER PEDAGÓGICO AUTOMÁTICO -->
+            <div class="bg-blue-950/40 border border-blue-800/50 p-3.5 rounded-xl text-xs text-blue-200 space-y-1">
+                <p class="font-bold text-sky-300"><i class="fa-solid fa-award mr-1"></i> Parecer Pedagógico do Instrutor (Automatizado):</p>
+                <p id="repTeacherComment">O aluno concluiu o percurso de aprendizagem de TGDQ com excelência.</p>
             </div>
 
             <!-- AÇÕES E BOTÕES -->
@@ -361,10 +349,10 @@
                     <i class="fa-solid fa-copy"></i> Copiar Texto Formatado
                 </button>
                 <button onclick="printReport()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm flex items-center gap-2 transition">
-                    <i class="fa-solid fa-print"></i> Imprimir / PDF
+                    <i class="fa-solid fa-print"></i> Imprimir / PDF (Drive)
                 </button>
                 <button onclick="restartGameFull()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm border border-slate-600 transition">
-                    <i class="fa-solid fa-rotate-right"></i> Jogue Novamente
+                    <i class="fa-solid fa-rotate-right"></i> Reiniciar Jogo
                 </button>
             </div>
 
@@ -404,9 +392,21 @@
                     const osc = audioCtx.createOscillator();
                     const gain = audioCtx.createGain();
                     osc.type = 'square';
-                    osc.frequency.setValueAtTime(150, now);
-                    osc.frequency.exponentialRampToValueAtTime(400, now + 0.15);
+                    osc.frequency.setValueAtTime(160, now);
+                    osc.frequency.exponentialRampToValueAtTime(450, now + 0.12);
                     gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.linearRampToValueAtTime(0, now + 0.12);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.12);
+                } else if (type === 'doubleJump') {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(350, now);
+                    osc.frequency.exponentialRampToValueAtTime(700, now + 0.15);
+                    gain.gain.setValueAtTime(0.12, now);
                     gain.gain.linearRampToValueAtTime(0, now + 0.15);
                     osc.connect(gain);
                     gain.connect(audioCtx.destination);
@@ -429,31 +429,31 @@
                         const osc = audioCtx.createOscillator();
                         const gain = audioCtx.createGain();
                         osc.type = 'triangle';
-                        osc.frequency.setValueAtTime(freq, now + i * 0.07);
-                        gain.gain.setValueAtTime(0.1, now + i * 0.07);
-                        gain.gain.linearRampToValueAtTime(0, now + i * 0.07 + 0.15);
+                        osc.frequency.setValueAtTime(freq, now + i * 0.06);
+                        gain.gain.setValueAtTime(0.1, now + i * 0.06);
+                        gain.gain.linearRampToValueAtTime(0, now + i * 0.06 + 0.12);
                         osc.connect(gain);
                         gain.connect(audioCtx.destination);
-                        osc.start(now + i * 0.07);
-                        osc.stop(now + i * 0.07 + 0.15);
+                        osc.start(now + i * 0.06);
+                        osc.stop(now + i * 0.06 + 0.12);
                     });
                 } else if (type === 'wrong') {
                     const osc = audioCtx.createOscillator();
                     const gain = audioCtx.createGain();
                     osc.type = 'sawtooth';
-                    osc.frequency.setValueAtTime(200, now);
-                    osc.frequency.linearRampToValueAtTime(100, now + 0.3);
+                    osc.frequency.setValueAtTime(220, now);
+                    osc.frequency.linearRampToValueAtTime(110, now + 0.25);
                     gain.gain.setValueAtTime(0.15, now);
-                    gain.gain.linearRampToValueAtTime(0, now + 0.3);
+                    gain.gain.linearRampToValueAtTime(0, now + 0.25);
                     osc.connect(gain);
                     gain.connect(audioCtx.destination);
                     osc.start(now);
-                    osc.stop(now + 0.3);
+                    osc.stop(now + 0.25);
                 } else if (type === 'stomp') {
                     const osc = audioCtx.createOscillator();
                     const gain = audioCtx.createGain();
                     osc.type = 'square';
-                    osc.frequency.setValueAtTime(120, now);
+                    osc.frequency.setValueAtTime(140, now);
                     osc.frequency.exponentialRampToValueAtTime(40, now + 0.1);
                     gain.gain.setValueAtTime(0.15, now);
                     gain.gain.linearRampToValueAtTime(0, now + 0.1);
@@ -463,7 +463,7 @@
                     osc.stop(now + 0.1);
                 }
             } catch (e) {
-                console.log("Audio not allowed yet");
+                console.log("Audio waiting for user interaction");
             }
         }
 
@@ -479,163 +479,393 @@
         }
 
         /* ==========================================================================
-           2. TGDQ CURRICULUM QUIZ DATA BANK
+           2. TGDQ COMPLETE 10-LEVEL QUESTION BANK
            ========================================================================== */
         const quizData = {
-            1: [
+            1: [ // Fundamentos de Dados
                 {
                     id: "l1_q1",
-                    question: "No contexto de TGDQ, o que representa o número isolado '1500' sem nenhuma rotulagem ou contexto?",
+                    question: "O que representa o valor isolado '3500' sem rotulagem ou contexto?",
                     options: [
-                        "Um Conhecimento estratégico de mercado.",
+                        "Um Conhecimento de negócios.",
                         "Um Dado bruto que necessita de tratamento.",
-                        "Uma Informação completa para tomada de decisão.",
+                        "Uma Informação para tomada de decisão.",
                         "Um Indicador de Margem de Lucro."
                     ],
                     correct: 1,
-                    explanation: "Excelente! Um dado isolado sem contexto é apenas um Dado Bruto. Quando contextualizado (ex: R$ 1.500 de vendas em agosto), ele se transforma em Informação!"
+                    explanation: "Correto! Um valor isolado sem contexto é apenas um Dado Bruto. Ao adicionar contexto (ex: R$ 3.500 em Vendas), torna-se uma Informação!"
                 },
                 {
                     id: "l1_q2",
-                    question: "Bases de dados relacionais e tabelas com colunas e linhas bem definidas (como SQL ou Excel) são classificadas como:",
+                    question: "Arquivos de texto livre, e-mails, imagens e vídeos são classificados como:",
                     options: [
-                        "Dados Não Estruturados.",
                         "Dados Estruturados.",
-                        "Dados Informais.",
-                        "Dados Causalísticos."
+                        "Dados Não Estruturados.",
+                        "Dados Transacionais OLTP.",
+                        "Séries Temporais."
                     ],
                     correct: 1,
-                    explanation: "Correto! Dados Estruturados possuem formato rígido e organizado em linhas/colunas. Já arquivos de áudio, PDFs e e-mails são não estruturados."
+                    explanation: "Exato! Dados Não Estruturados não possuem um formato rígido em linhas e colunas organizadas como em tabelas ou bancos relacionais."
                 },
                 {
                     id: "l1_q3",
-                    question: "Qual a diferença fundamental entre um sistema OLTP e um sistema OLAP?",
+                    question: "Qual é o grande objetivo de coletar, tratar e interpretar dados no ambiente empresarial?",
                     options: [
-                        "OLTP foca em registrar operações diárias (transacional); OLAP em análise de grandes volumes para decisão.",
-                        "OLTP cria gráficos; OLAP serve apenas para digitar formulas simples.",
-                        "OLTP trata dados não estruturados; OLAP apaga dados antigos.",
-                        "Ambos possuem a mesma função sem divergência técnica."
-                    ],
-                    correct: 0,
-                    explanation: "Perfeito! OLTP (Online Transaction Processing) registra vendas/operações em tempo real. OLAP (Online Analytical Processing) analisa dados históricos para apoiar decisões."
-                },
-                {
-                    id: "l1_q4",
-                    question: "Durante a auditoria de dados econômicos, você nota uma inconsistência em uma série histórica. Qual o primeiro passo?",
-                    options: [
-                        "Apagar os números imediatamente sem conferir.",
-                        "Conferir as fontes originais, unidades de medida e o período correspondente.",
-                        "Alterar os dados para que se adequem à sua opinião pessoal.",
-                        "Criar um gráfico bonitinho para disfarçar o erro."
+                        "Apenas preencher relatórios obrigatórios.",
+                        "Reduzir incertezas e fundamentar decisões e ações estratégicas.",
+                        "Substituir todos os funcionários por robôs.",
+                        "Aumentar o tamanho dos arquivos na nuvem."
                     ],
                     correct: 1,
-                    explanation: "Exato! Na Auditoria de Dados, sempre conferimos a confiabilidade das fontes, unidades de medida e prazos antes de revisar conclusões!"
+                    explanation: "Perfeito! A finalidade central do TGDQ é transformar dados em Conhecimento para apoiar decisões eficientes!"
                 }
             ],
-            2: [
+            2: [ // Pesquisa e Validação de Dados
                 {
                     id: "l2_q1",
-                    question: "Em planilhas eletrônicas, qual função de pesquisa vertical é amplamente utilizada para buscar valores numa tabela chave?",
+                    question: "Para analisar indicadores econômicos oficiais do Brasil (como inflação IPCA ou PIB), qual fonte é considerada altamente confiável?",
                     options: [
-                        "SOMAQUDRADO",
-                        "PROCV / PROCX",
-                        "CONT.SE",
-                        "CONCATENAR"
+                        "Blogs pessoais sem autoria identificada.",
+                        "Fontes oficiais como IBGE, Banco Central (BCB) e IPEA.",
+                        "Mensagens não checadas de redes sociais.",
+                        "Comentários de fóruns de jogos."
                     ],
                     correct: 1,
-                    explanation: "Muito bem! O PROCV (e o moderno PROCX) busca um valor em uma coluna e retorna informações correspondentes de outra coluna da mesma linha."
+                    explanation: "Muito bem! Instituições como IBGE, BCB e IPEA fornecem metodologias transparentes e dados auditados."
                 },
                 {
                     id: "l2_q2",
-                    question: "Em estatística descritiva, qual medida de tendência central representa o valor que OCORRE COM MAIOR FREQUÊNCIA numa série?",
+                    question: "Durante a auditoria de uma série histórica, você nota que as vendas de 2024 estão em DÓLARES e as de 2025 em REAIS. Isso é um erro de:",
                     options: [
-                        "Média Aritmética",
-                        "Mediana",
-                        "Moda",
-                        "Desvio Padrão"
+                        "Falta de fórmulas complexas.",
+                        "Divergência de Unidade de Medida.",
+                        "Problema no teclado do computador.",
+                        "Erro de amostragem de dados."
                     ],
-                    correct: 2,
-                    explanation: "Correto! A Moda é o valor mais frequente da distribuição. A Mediana é o valor central e a Média é a soma dividida pelo total."
+                    correct: 1,
+                    explanation: "Correto! Para comparar dados em séries históricas, a unidade de medida (moeda, peso, volume) deve estar padronizada!"
                 },
                 {
                     id: "l2_q3",
-                    question: "Uma empresa registrou Receita Total de R$ 50.000 e Custos Totais de R$ 30.000. Qual a sua Margem de Lucro Percentual?",
+                    question: "Qual o primeiro passo ao encontrar valores inconsistentes ou discrepantes (outliers) na auditoria de dados?",
                     options: [
-                        "20%",
-                        "40%",
-                        "60%",
-                        "30%"
-                    ],
-                    correct: 1,
-                    explanation: "Exato! Lucro = R$ 20.000 (50.000 - 30.000). Margem = Lucro / Receita = 20.000 / 50.000 = 0,40 = 40%."
-                },
-                {
-                    id: "l2_q4",
-                    question: "Qual a sintaxe correta da função lógica SE para aprovar um indicador se a célula A1 for maior ou igual a 70?",
-                    options: [
-                        "=SE(A1>=70; 'Aprovado'; 'Reprovado')",
-                        "=SE(A1=70; Aprovado; Reprovado)",
-                        "=SE.SE(A1>=70)",
-                        "=PROCV(A1; 70; 'Aprovado')"
+                        "Conferir fontes originais, períodos e histórico antes de alterar ou tomar conclusões.",
+                        "Apagar os dados imediatamente.",
+                        "Inventar números novos aleatórios.",
+                        "Publicar o relatório sem avisar ninguém."
                     ],
                     correct: 0,
-                    explanation: "Isso aí! A sintaxe do SE no Excel é: =SE(condição_lógica; valor_se_verdadeiro; valor_se_falso)."
+                    explanation: "Exato! Na Auditoria de Dados, sempre conferimos fontes e metodologias antes de fazer correções."
                 }
             ],
-            3: [
+            3: [ // Planilhas Eletrônicas e Operações Básicas
                 {
                     id: "l3_q1",
-                    question: "O que caracteriza um KPI (Key Performance Indicator / Indicador-Chave de Desempenho)?",
+                    question: "Nas planilhas eletrônicas (Excel/Google Sheets), o que caracteriza a interseção entre uma linha e uma coluna?",
                     options: [
-                        "Qualquer planilha com mais de 100 linhas.",
-                        "Uma métrica quantitativa alinhada aos objetivos estratégicos da organização.",
-                        "Um software pago de envio de e-mails automáticos.",
-                        "A soma de todos os custos fixos da empresa."
+                        "Uma Matriz.",
+                        "Uma Célula (ex: A1, B10).",
+                        "Um Intervalo Nomeado.",
+                        "Uma Tabela Dinâmica."
                     ],
                     correct: 1,
-                    explanation: "Exato! KPIs são indicadores focados nas metas críticas do negócio, permitindo acompanhar o progresso e tomar decisões rapidamente."
+                    explanation: "Isso mesmo! Uma célula é a unidade básica onde inserimos valores, textos ou fórmulas!"
                 },
                 {
                     id: "l3_q2",
-                    question: "O aumento das vendas de sorvete e o aumento das queimaduras de praia ocorrem no mesmo período. Isso comprova que sorvete causa queimadura?",
+                    question: "Para realizar uma elevação à potência (ex: 2 elevado a 3) em uma fórmula do Excel, qual operador é utilizado?",
                     options: [
-                        "Sim, pois há causalidade direta.",
-                        "Não, trata-se de CORRELAÇÃO devido a uma variável comum (o Calor do Verão), e não de causalidade.",
-                        "Sim, pois dados quantitativos nunca mentem.",
-                        "Não, pois sorvetes não são vendidos no verão."
+                        "O caractere *",
+                        "O caractere ^ (Circunflexo)",
+                        "O caractere %",
+                        "O caractere #"
                     ],
                     correct: 1,
-                    explanation: "Brilhante! Correlação não significa Causalidade! Ambas as variáveis sobem no verão por conta do calor, mas um fato não causa o outro diretamente."
+                    explanation: "Perfeito! No Excel, `=2^3` resulta em 8."
                 },
                 {
                     id: "l3_q3",
-                    question: "Qual é a sequência lógica exata do Fio Condutor da UC de TGDQ para apoiar a gestão empresarial?",
+                    question: "Se a célula A1 tem valor 100 e B1 tem valor 20, qual fórmula calcula o Custo Total somando ambas?",
                     options: [
-                        "Ação &rarr; Decisão &rarr; Dado &rarr; Gráfico &rarr; Margem.",
-                        "Dado &rarr; Tratamento &rarr; Análise &rarr; Indicador &rarr; Interpretação &rarr; Decisão &rarr; Ação.",
-                        "Planilha &rarr; Corromper &rarr; Apagar &rarr; Relatório &rarr; Lucro.",
-                        "OLTP &rarr; OLAP &rarr; PROCV &rarr; SOMA &rarr; Fim."
+                        "=SOMA(A1+B1) ou =A1+B1",
+                        "=MAIS(A1;B1)",
+                        "A1+B1 sem sinal de igual",
+                        "=ACUMULAR(A1:B1)"
                     ],
-                    correct: 1,
-                    explanation: "Perfeito! Esse é o Fio Condutor do SENAI: transformamos DADOS brutos até gerar AÇÕES estratégicas eficientes!"
+                    correct: 0,
+                    explanation: "Exato! Toda fórmula no Excel precisa iniciar obrigatoriamente com o sinal de igual (`=`)."
+                }
+            ],
+            4: [ // Funções de Pesquisa e Lógicas
+                {
+                    id: "l4_q1",
+                    question: "Qual a função do PROCV ao pesquisar dados em uma tabela?",
+                    options: [
+                        "Procurar um valor na primeira coluna à esquerda e retornar um dado da mesma linha.",
+                        "Somar automaticamente todas as células selecionadas.",
+                        "Inverter as colunas por linhas.",
+                        "Excluir duplicadas de uma lista."
+                    ],
+                    correct: 0,
+                    explanation: "Correto! O PROCV realiza busca vertical com base em uma chave única."
                 },
                 {
-                    id: "l3_boss",
-                    question: "🔥 CHEFÃO FINAL — ESTUDO DE CASO EXECUTIVO: A Empresa Alfa registrou queda de 25% na satisfação dos clientes. Dados do sistema mostram atrasos logísticos na entrega. Como o Assistente Administrativo deve agir usando o Fio Condutor?",
+                    id: "l4_q2",
+                    question: "A função `=SE(A1>=70; 'Aprovado'; 'Reprovado')` retornará o que se A1 for igual a 85?",
                     options: [
-                        "Ignorar o relatório e sugerir dar desconto para todos os clientes sem analisar.",
-                        "Tratar e analisar a base de entregas, identificar a causa raiz das rotas atrasadas, apresentar o indicador em gráfico e propor um plano de ação na logística.",
-                        "Demitir a equipe inteira de atendimento sem conferir as fontes de dados.",
-                        "Alterar os números da pesquisa de satisfação para parecer tudo perfeito."
+                        "Reprovado",
+                        "Aprovado",
+                        "ERRO#",
+                        "0"
                     ],
                     correct: 1,
-                    explanation: "PARABÉNS! Você derrotou o MONSTRO DO RELATÓRIO CAÓTICO! Ao analisar dados reais e embasar a tomada de decisão com evidências, você se tornou um MESTRE DOS DADOS SENAI!"
+                    explanation: "Muito bem! Como 85 >= 70 é Verdadeiro, o primeiro argumento ('Aprovado') é retornado."
+                },
+                {
+                    id: "l4_q3",
+                    question: "Para testar se DUAS condições são verdadeiras simultaneamente em uma regra de validação, usamos a função lógica:",
+                    options: [
+                        "OU",
+                        "E",
+                        "NÃO",
+                        "SEERRO"
+                    ],
+                    correct: 1,
+                    explanation: "Exato! A função `E(cond1; cond2)` exige que todas as condições sejam verdadeiras."
+                }
+            ],
+            5: [ // OLTP vs OLAP e Arquitetura de Dados
+                {
+                    id: "l5_q1",
+                    question: "Sistemas OLTP (Online Transaction Processing) são otimizados para:",
+                    options: [
+                        "Análises históricas multidimensionais de 10 anos.",
+                        "Registrar transações rápidas e diárias (vendas no caixa, emissão de notas).",
+                        "Criar apresentações de slides.",
+                        "Formatar gráficos de pizza."
+                    ],
+                    correct: 1,
+                    explanation: "Perfeito! OLTP foca no dia a dia operacional, garantindo velocidade e consistência nas transações."
+                },
+                {
+                    id: "l5_q2",
+                    question: "O processo ETL em arquitetura de dados significa:",
+                    options: [
+                        "Extract, Transform, Load (Extrair, Transformar e Carregar).",
+                        "Excel, Table, List.",
+                        "Error, Testing, Logging.",
+                        "Export, Transfer, Leak."
+                    ],
+                    correct: 0,
+                    explanation: "Correto! ETL extrai dados brutos de fontes diversas, limpa/transforma os dados e carrega no Data Warehouse!"
+                },
+                {
+                    id: "l5_q3",
+                    question: "O que é um Data Warehouse (DW)?",
+                    options: [
+                        "Um depósito físico para guardar computadores velhos.",
+                        "Um repositório centralizado de dados integrados de várias fontes para análise e Business Intelligence.",
+                        "Uma planilha com no máximo 10 linhas.",
+                        "Um antivírus de servidores."
+                    ],
+                    correct: 1,
+                    explanation: "Exato! O DW consolida o histórico de toda a empresa para análises OLAP estratégicas."
+                }
+            ],
+            6: [ // Estatística Descritiva
+                {
+                    id: "l6_q1",
+                    question: "Dada a série de salários: R$ 2000, R$ 2000, R$ 3000, R$ 5000. Qual é a MODA dessa distribuição?",
+                    options: [
+                        "R$ 3000",
+                        "R$ 2000",
+                        "R$ 5000",
+                        "R$ 2500"
+                    ],
+                    correct: 1,
+                    explanation: "Correto! A Moda é o valor mais frequente (R$ 2000 aparece duas vezes)."
+                },
+                {
+                    id: "l6_q2",
+                    question: "A MEDIANA de um conjunto de dados ordenados representa:",
+                    options: [
+                        "O valor do elemento central que divide o conjunto em duas partes iguais (50%).",
+                        "A soma de todos os números dividida pelo total.",
+                        "O valor mais alto.",
+                        "A diferença entre o maior e o menor valor."
+                    ],
+                    correct: 0,
+                    explanation: "Exato! A Mediana separa a metade superior da metade inferior da distribuição."
+                },
+                {
+                    id: "l6_q3",
+                    question: "O que o DESVIO PADRÃO mede em uma análise de dados?",
+                    options: [
+                        "A velocidade da conexão de internet.",
+                        "A dispersão ou variação dos dados em relação à média.",
+                        "O valor total de impostos a pagar.",
+                        "O número de colunas da planilha."
+                    ],
+                    correct: 1,
+                    explanation: "Perfeito! Quanto maior o Desvio Padrão, mais dispersos/heterogêneos estão os dados em relação à média."
+                }
+            ],
+            7: [ // Indicadores e Métricas Empresariais
+                {
+                    id: "l7_q1",
+                    question: "Se uma empresa faturou R$ 100.000 em vendas e teve Lucro Líquido de R$ 25.000, qual a sua Margem de Lucro?",
+                    options: [
+                        "10%",
+                        "25%",
+                        "50%",
+                        "75%"
+                    ],
+                    correct: 1,
+                    explanation: "Muito bem! Margem = (Lucro / Receita) * 100 = (25.000 / 100.000) * 100 = 25%."
+                },
+                {
+                    id: "l7_q2",
+                    question: "O que diferencia um KPI (Key Performance Indicator) de uma métrica comum?",
+                    options: [
+                        "KPIs são métricas críticas vinculadas aos objetivos e metas estratégicas do negócio.",
+                        "KPIs são sempre escritos em vermelho.",
+                        "Métricas comuns só servem para a diretoria.",
+                        "Não há nenhuma diferença técnica."
+                    ],
+                    correct: 0,
+                    explanation: "Correto! Um KPI orienta tomadas de decisão cruciais para o alcance das metas empresariais."
+                },
+                {
+                    id: "l7_q3",
+                    question: "A participação percentual de um produto A nas vendas totais da loja é calculada por:",
+                    options: [
+                        "(Vendas do Produto A / Vendas Totais) * 100",
+                        "(Vendas Totais - Vendas do Produto A)",
+                        "Vendas do Produto A * 100",
+                        "(Vendas Totais / Vendas do Produto A)"
+                    ],
+                    correct: 0,
+                    explanation: "Exato! A parte dividida pelo todo expressa a fatia de mercado (Market Share) ou participação relativa."
+                }
+            ],
+            8: [ // Gráficos e Funções de Data
+                {
+                    id: "l8_q1",
+                    question: "Para visualizar a evolução temporal das vendas mês a mês ao longo de 5 anos, qual o gráfico mais adequado?",
+                    options: [
+                        "Gráfico de Pizza (Setores)",
+                        "Gráfico de Linha",
+                        "Gráfico de Rosca",
+                        "Gráfico de Dispersão Sem Linhas"
+                    ],
+                    correct: 1,
+                    explanation: "Correto! Gráficos de Linha são ideais para séries temporais e identificação de tendências!"
+                },
+                {
+                    id: "l8_q2",
+                    question: "Qual função do Excel retorna a data atual do sistema dinamicamente?",
+                    options: [
+                        "=AGORA()",
+                        "=HOJE()",
+                        "=DATAATUAL()",
+                        "=SISTEMA.DATA()"
+                    ],
+                    correct: 1,
+                    explanation: "Exato! A função `=HOJE()` insere a data corrente sem hora."
+                },
+                {
+                    id: "l8_q3",
+                    question: "Se a célula A1 possui a data '24/08/2026', a função `=ANO(A1)` retornará:",
+                    options: [
+                        "24",
+                        "08",
+                        "2026",
+                        "24/08"
+                    ],
+                    correct: 2,
+                    explanation: "Isso aí! A função `=ANO()` extrai apenas os quatro dígitos correspondentes ao ano."
+                }
+            ],
+            9: [ // Tabelas Dinâmicas e Automação
+                {
+                    id: "l9_q1",
+                    question: "Qual a principal vantagem de utilizar uma TABELA DINÂMICA (Pivot Table) no Excel?",
+                    options: [
+                        "Resumir, cruzar e analisar grandes volumes de dados rapidamente sem digitar fórmulas manuais.",
+                        "Mudar a cor de fundo das células automaticamente.",
+                        "Enviar e-mails para clientes cadastrados.",
+                        "Aumentar a velocidade do computador."
+                    ],
+                    correct: 0,
+                    explanation: "Perfeito! A Tabela Dinâmica permite reorganizar e agregar bases extensas em segundos."
+                },
+                {
+                    id: "l9_q2",
+                    question: "O que é uma MACRO nas planilhas eletrônicas?",
+                    options: [
+                        "Um vírus de computador perigoso.",
+                        "Um conjunto de comandos gravados ou programados (VBA) para automatizar tarefas repetitivas.",
+                        "Uma célula gigante que ocupa várias colunas.",
+                        "Um tipo especial de gráfico 3D."
+                    ],
+                    correct: 1,
+                    explanation: "Correto! Macros poupam tempo automatizando rotinas padronizadas de tratamento de dados."
+                },
+                {
+                    id: "l9_q3",
+                    question: "Para simular como diferentes variações nos custos e preços afetam o Lucro Final, utilizamos:",
+                    options: [
+                        "Análise de Cenários e Atingir Meta.",
+                        "Filtro Simples.",
+                        "Validação por Lista.",
+                        "Formatação Condicional apenas."
+                    ],
+                    correct: 0,
+                    explanation: "Exato! A Análise de Cenários permite testar hipóteses numéricas com segurança antes de decidir."
+                }
+            ],
+            10: [ // O Fio Condutor da Decisão (Desafio Integrado TGDQ)
+                {
+                    id: "l10_q1",
+                    question: "No Fio Condutor da UC de TGDQ do SENAI, qual é a ordem exata da cadeia de valor dos dados?",
+                    options: [
+                        "Dado &rarr; Tratamento &rarr; Análise &rarr; Indicador &rarr; Interpretação &rarr; Decisão &rarr; Ação",
+                        "Ação &rarr; Decisão &rarr; Gráfico &rarr; Relatório &rarr; Dado",
+                        "Tratamento &rarr; Dado &rarr; Indicador &rarr; Excel &rarr; Ação",
+                        "Relatório &rarr; Pivot Table &rarr; Custo &rarr; Lucro"
+                    ],
+                    correct: 0,
+                    explanation: "Brilhante! Esse é o Fio Condutor completo do SENAI para transformar dados brutos em impacto real!"
+                },
+                {
+                    id: "l10_q2",
+                    question: "Dois indicadores apresentam alta correlação estatística. Podemos afirmar obrigatoriamente que um causou o outro?",
+                    options: [
+                        "Sim, toda correlação prova causalidade direta.",
+                        "Não, Correlação não implica Causalidade; pode haver variáveis ocultas ou coincidência.",
+                        "Sim, pois números não falham.",
+                        "Não, porque estatística não serve para dados empresariais."
+                    ],
+                    correct: 1,
+                    explanation: "Perfeito! A diferença entre Correlação e Causalidade é essencial para evitar diagnósticos falsos na empresa."
+                },
+                {
+                    id: "l10_boss",
+                    question: "🔥 CHEFÃO FINAL (ESTUDO DE CASO EXECUTIVO): O Dashboard do SENAI indica alta taxa de refugo na produção. Como o Assistente Administrativo deve agir usando as evidências dos dados?",
+                    options: [
+                        "Ocultar o indicador da diretoria para evitar problemas.",
+                        "Analisar a base tratada por lote/horário, identificar o gargalo de causa raiz, apresentar em gráfico e propor ação corretiva fundamentada.",
+                        "Demitir os operadores do turno sem conferir o histórico.",
+                        "Aumentar a meta sem verificar a causa do problema."
+                    ],
+                    correct: 1,
+                    explanation: "PARABÉNS! VOCÊ DESTRUÍU O BUG DA DECISÃO À CEGA E SE TORNOU UM ANALISTA MESTRE EM TGDQ SENAI!"
                 }
             ]
         };
 
         /* ==========================================================================
-           3. GAME ENGINE & STATE MANAGEMENT
+           3. GAME ENGINE & LEVEL CONFIGURATION (10 LEVELS)
            ========================================================================== */
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
@@ -650,29 +880,45 @@
         let timerInterval = null;
         let gameLoopReq = null;
 
-        // Player properties
+        // Player properties with Double Jump capability
         const player = {
             x: 50,
-            y: 300,
+            y: 200,
             width: 28,
             height: 38,
             vx: 0,
             vy: 0,
-            speed: 4,
-            jumpForce: 11,
+            speed: 4.8,
+            jumpForce: 13.5, // Increased jump power for reachability
+            gravity: 0.52,   // Smooth gravity
             grounded: false,
-            facing: 'right',
-            animFrame: 0
+            jumpsRemaining: 2, // Double jump support!
+            maxJumps: 2,
+            facing: 'right'
+        };
+
+        // Level theme visual styles
+        const levelThemes = {
+            1: { name: "Fundamentos de Dados", sky: "#5c94fc", ground: "#16a34a", plat: "#b45309" },
+            2: { name: "Pesquisa & Validação", sky: "#d97706", ground: "#059669", plat: "#78350f" },
+            3: { name: "Estrutura de Planilhas", sky: "#0284c7", ground: "#0d9488", plat: "#1e3a8a" },
+            4: { name: "Funções de Pesquisa & SE", sky: "#7c3aed", ground: "#2563eb", plat: "#4c1d95" },
+            5: { name: "OLTP, OLAP & DW", sky: "#0f172a", ground: "#334155", plat: "#0284c7" },
+            6: { name: "Estatística Descritiva", sky: "#ca8a04", ground: "#15803d", plat: "#854d0e" },
+            7: { name: "KPIs & Métricas", sky: "#0d9488", ground: "#166534", plat: "#134e4a" },
+            8: { name: "Gráficos & Datas", sky: "#1e1b4b", ground: "#4338ca", plat: "#312e81" },
+            9: { name: "Tabelas Dinâmicas", sky: "#022c22", ground: "#15803d", plat: "#064e3b" },
+            10: { name: "O Fio Condutor da Decisão", sky: "#450a0a", ground: "#991b1b", plat: "#7f1d1d" }
         };
 
         // Camera Offset
         let cameraX = 0;
         const levelWidth = 2600;
 
-        // Keys pressed
-        const keys = { left: false, right: false, up: false };
+        // Key states
+        const keys = { left: false, right: false, up: false, jumpPressed: false };
 
-        // Level Entities
+        // Entities
         let platforms = [];
         let questionBlocks = [];
         let coinItems = [];
@@ -680,7 +926,7 @@
         let bossEntity = null;
         let goalPipe = null;
 
-        // Tracking Student Answers for Performance Report
+        // Log of answers for Student Performance Report
         let studentAnswers = [];
 
         function selectAvatar(name) {
@@ -694,12 +940,11 @@
         }
 
         function toggleInstructionsModal(show) {
-            const modal = document.getElementById('instructionsModal');
-            modal.style.display = show ? 'flex' : 'none';
+            document.getElementById('instructionsModal').style.display = show ? 'flex' : 'none';
         }
 
         /* ==========================================================================
-           4. LEVEL GENERATOR & ENTITIES BUILDER
+           4. LEVEL GENERATOR WITH TAILORED ELEVATIONS & ENTITIES
            ========================================================================== */
         function loadLevel(levelNum) {
             currentLevel = levelNum;
@@ -707,6 +952,8 @@
             player.y = 200;
             player.vx = 0;
             player.vy = 0;
+            player.grounded = false;
+            player.jumpsRemaining = player.maxJumps;
             cameraX = 0;
 
             platforms = [];
@@ -715,147 +962,119 @@
             enemies = [];
             bossEntity = null;
 
-            // Ground floors
-            platforms.push({ x: 0, y: 390, width: 800, height: 60 });
-            platforms.push({ x: 880, y: 390, width: 700, height: 60 }); // Gap at 800-880
-            platforms.push({ x: 1650, y: 390, width: 950, height: 60 }); // Gap at 1580-1650
+            const theme = levelThemes[levelNum];
+            document.getElementById('hudLevelName').innerText = `FASE ${levelNum}/10: ${theme.name}`;
 
-            // Floating Brick Platforms & Question Blocks
-            const levelQuestions = quizData[levelNum];
+            // Ground floors with strategic gaps
+            platforms.push({ x: 0, y: 390, width: 850, height: 60 });
+            platforms.push({ x: 930, y: 390, width: 750, height: 60 }); // Gap 850-930
+            platforms.push({ x: 1750, y: 390, width: 850, height: 60 }); // Gap 1680-1750
 
-            if (levelNum === 1) {
-                // FASE 1 - SKY / REINO
-                document.getElementById('hudLevelName').innerText = "FASE 1: Reino dos Dados Brutos";
-                document.getElementById('hudLevelName').className = "text-emerald-400 font-semibold";
+            // Reachable elevated platforms and '?' blocks
+            const questions = quizData[levelNum];
 
-                platforms.push({ x: 220, y: 280, width: 140, height: 24 });
-                questionBlocks.push({ x: 260, y: 180, width: 32, height: 32, qData: levelQuestions[0], hit: false });
+            // Platform set 1
+            platforms.push({ x: 220, y: 280, width: 140, height: 20 });
+            questionBlocks.push({ x: 265, y: 175, width: 32, height: 32, qData: questions[0], hit: false });
 
-                platforms.push({ x: 500, y: 250, width: 120, height: 24 });
-                questionBlocks.push({ x: 540, y: 150, width: 32, height: 32, qData: levelQuestions[1], hit: false });
+            // Platform set 2
+            platforms.push({ x: 520, y: 250, width: 150, height: 20 });
+            questionBlocks.push({ x: 575, y: 145, width: 32, height: 32, qData: questions[1], hit: false });
 
-                platforms.push({ x: 950, y: 270, width: 160, height: 24 });
-                questionBlocks.push({ x: 1010, y: 160, width: 32, height: 32, qData: levelQuestions[2], hit: false });
+            // Platform set 3
+            platforms.push({ x: 1000, y: 270, width: 160, height: 20 });
+            questionBlocks.push({ x: 1060, y: 165, width: 32, height: 32, qData: questions[2], hit: false });
 
-                platforms.push({ x: 1350, y: 230, width: 140, height: 24 });
-                questionBlocks.push({ x: 1400, y: 130, width: 32, height: 32, qData: levelQuestions[3], hit: false });
-
-                // Enemies (Bugs)
-                enemies.push({ x: 400, y: 360, width: 30, height: 28, vx: -1.2, minX: 300, maxX: 600, alive: true });
-                enemies.push({ x: 1100, y: 360, width: 30, height: 28, vx: -1.5, minX: 900, maxX: 1300, alive: true });
-                enemies.push({ x: 1800, y: 360, width: 30, height: 28, vx: -1.8, minX: 1680, maxX: 2100, alive: true });
-
-            } else if (levelNum === 2) {
-                // FASE 2 - CAVERN / SPREADSHEETS
-                document.getElementById('hudLevelName').innerText = "FASE 2: Mina das Planilhas & Estatística";
-                document.getElementById('hudLevelName').className = "text-yellow-400 font-semibold";
-
-                platforms.push({ x: 200, y: 290, width: 120, height: 24 });
-                questionBlocks.push({ x: 240, y: 180, width: 32, height: 32, qData: levelQuestions[0], hit: false });
-
-                platforms.push({ x: 480, y: 230, width: 160, height: 24 });
-                questionBlocks.push({ x: 540, y: 130, width: 32, height: 32, qData: levelQuestions[1], hit: false });
-
-                platforms.push({ x: 920, y: 260, width: 140, height: 24 });
-                questionBlocks.push({ x: 970, y: 150, width: 32, height: 32, qData: levelQuestions[2], hit: false });
-
-                platforms.push({ x: 1300, y: 220, width: 150, height: 24 });
-                questionBlocks.push({ x: 1350, y: 120, width: 32, height: 32, qData: levelQuestions[3], hit: false });
-
-                // Enemies
-                enemies.push({ x: 450, y: 360, width: 30, height: 28, vx: -1.5, minX: 350, maxX: 650, alive: true });
-                enemies.push({ x: 1000, y: 360, width: 30, height: 28, vx: -1.8, minX: 880, maxX: 1200, alive: true });
-                enemies.push({ x: 1750, y: 360, width: 30, height: 28, vx: -2.0, minX: 1660, maxX: 2000, alive: true });
-
-            } else if (levelNum === 3) {
-                // FASE 3 - CASTLE / DASHBOARD & BOSS
-                document.getElementById('hudLevelName').innerText = "FASE 3: Castelo da Decisão Executiva";
-                document.getElementById('hudLevelName').className = "text-purple-400 font-semibold";
-
-                platforms.push({ x: 220, y: 280, width: 140, height: 24 });
-                questionBlocks.push({ x: 260, y: 170, width: 32, height: 32, qData: levelQuestions[0], hit: false });
-
-                platforms.push({ x: 550, y: 240, width: 140, height: 24 });
-                questionBlocks.push({ x: 600, y: 130, width: 32, height: 32, qData: levelQuestions[1], hit: false });
-
-                platforms.push({ x: 980, y: 260, width: 140, height: 24 });
-                questionBlocks.push({ x: 1030, y: 150, width: 32, height: 32, qData: levelQuestions[2], hit: false });
-
-                // Boss Entity at the end of Level 3
+            // Level 10 Boss Special Setup
+            if (levelNum === 10) {
                 bossEntity = {
-                    x: 2100,
+                    x: 2050,
                     y: 270,
                     width: 90,
                     height: 120,
-                    qData: levelQuestions[3],
+                    qData: questions[questions.length - 1],
                     defeated: false
                 };
-
-                // Enemies
-                enemies.push({ x: 500, y: 360, width: 30, height: 28, vx: -2.0, minX: 350, maxX: 700, alive: true });
-                enemies.push({ x: 1100, y: 360, width: 30, height: 28, vx: -2.2, minX: 950, maxX: 1350, alive: true });
             }
 
             // Scatter Data Coins
-            for (let i = 150; i < 2300; i += 120) {
-                coinItems.push({ x: i, y: 340, width: 16, height: 20, collected: false });
+            for (let i = 140; i < 2350; i += 110) {
+                const coinY = (i % 220 === 0) ? 220 : 340;
+                coinItems.push({ x: i, y: coinY, width: 16, height: 20, collected: false });
             }
 
-            // Goal Pipe / Portal at end
-            goalPipe = { x: 2400, y: 310, width: 50, height: 80 };
+            // Enemies (Data Bugs)
+            enemies.push({ x: 420, y: 362, width: 30, height: 28, vx: -1.3, minX: 300, maxX: 650, alive: true });
+            enemies.push({ x: 1150, y: 362, width: 30, height: 28, vx: -1.6, minX: 950, maxX: 1350, alive: true });
+            enemies.push({ x: 1850, y: 362, width: 30, height: 28, vx: -1.8, minX: 1760, maxX: 2150, alive: true });
+
+            // Goal Pipe / Portal at end of phase
+            goalPipe = { x: 2420, y: 310, width: 50, height: 80 };
         }
 
         /* ==========================================================================
-           5. GAME CONTROLS & EVENT LISTENERS
+           5. CONTROLS & EVENT LISTENERS (KEYBOARD & TOUCH)
            ========================================================================== */
         function setupControls() {
             window.addEventListener('keydown', (e) => {
                 if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') keys.left = true;
                 if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') keys.right = true;
                 if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W' || e.key === ' ') {
-                    if (!keys.up && player.grounded) {
-                        player.vy = -player.jumpForce;
-                        player.grounded = false;
-                        playSound('jump');
+                    if (!keys.jumpPressed) {
+                        triggerJump();
                     }
-                    keys.up = true;
+                    keys.jumpPressed = true;
                 }
             });
 
             window.addEventListener('keyup', (e) => {
                 if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') keys.left = false;
                 if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') keys.right = false;
-                if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W' || e.key === ' ') keys.up = false;
+                if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W' || e.key === ' ') keys.jumpPressed = false;
             });
 
-            // Virtual Touch Controls
+            // Virtual Touch Controls setup
             const btnLeft = document.getElementById('btnLeft');
             const btnRight = document.getElementById('btnRight');
             const btnJump = document.getElementById('btnJump');
 
-            const bindTouch = (elem, keyName) => {
+            const bindTouch = (elem, action) => {
                 elem.addEventListener('touchstart', (e) => {
                     e.preventDefault();
-                    if (keyName === 'up' && player.grounded) {
-                        player.vy = -player.jumpForce;
-                        player.grounded = false;
-                        playSound('jump');
-                    }
-                    keys[keyName] = true;
+                    if (action === 'left') keys.left = true;
+                    if (action === 'right') keys.right = true;
+                    if (action === 'jump') triggerJump();
                 });
                 elem.addEventListener('touchend', (e) => {
                     e.preventDefault();
-                    keys[keyName] = false;
+                    if (action === 'left') keys.left = false;
+                    if (action === 'right') keys.right = false;
                 });
             };
 
             bindTouch(btnLeft, 'left');
             bindTouch(btnRight, 'right');
-            bindTouch(btnJump, 'up');
+            bindTouch(btnJump, 'jump');
+        }
+
+        function triggerJump() {
+            if (gameState !== 'PLAYING') return;
+
+            if (player.grounded) {
+                player.vy = -player.jumpForce;
+                player.grounded = false;
+                player.jumpsRemaining = player.maxJumps - 1;
+                playSound('jump');
+            } else if (player.jumpsRemaining > 0) {
+                // Double jump impulse
+                player.vy = -player.jumpForce * 0.92;
+                player.jumpsRemaining--;
+                playSound('doubleJump');
+            }
         }
 
         /* ==========================================================================
-           6. MAIN GAME LOOP & UPDATES
+           6. MAIN GAME LOOP & PHYSICS
            ========================================================================== */
         function startGame() {
             initAudio();
@@ -888,7 +1107,7 @@
         function updatePhysics() {
             if (gameState !== 'PLAYING') return;
 
-            // Apply horizontal velocity
+            // Lateral Movement
             if (keys.left) {
                 player.vx = -player.speed;
                 player.facing = 'left';
@@ -896,60 +1115,59 @@
                 player.vx = player.speed;
                 player.facing = 'right';
             } else {
-                player.vx *= 0.8; // Friction
+                player.vx *= 0.8;
             }
 
             // Gravity
-            player.vy += 0.55;
+            player.vy += player.gravity;
 
-            // Move X
+            // X movement
             player.x += player.vx;
-            // Prevent going back past left edge
             if (player.x < 0) player.x = 0;
 
-            // Platform Collision X & Y
+            // Platform Collisions (Y axis check)
             player.grounded = false;
 
             platforms.forEach(plat => {
                 if (
-                    player.x < plat.x + plat.width &&
                     player.x + player.width > plat.x &&
+                    player.x < plat.x + plat.width &&
                     player.y + player.height <= plat.y + 12 &&
                     player.y + player.height + player.vy >= plat.y
                 ) {
                     player.grounded = true;
+                    player.jumpsRemaining = player.maxJumps; // Reset double jump
                     player.vy = 0;
                     player.y = plat.y - player.height;
                 }
             });
 
-            // Move Y
+            // Y movement
             player.y += player.vy;
 
-            // Fall into pits
+            // Pit Fall Check
             if (player.y > 450) {
                 handlePlayerDeath("Caiu na lacuna de dados!");
                 return;
             }
 
-            // Question Blocks Collision (hitting from below)
+            // Question Blocks Collision (Hitting from below)
             questionBlocks.forEach(blk => {
                 if (
-                    player.x < blk.x + blk.width &&
                     player.x + player.width > blk.x &&
+                    player.x < blk.x + blk.width &&
                     player.y <= blk.y + blk.height &&
                     player.y + player.height >= blk.y
                 ) {
-                    // Hit underneath block
                     if (player.vy < 0 && !blk.hit) {
                         blk.hit = true;
-                        player.vy = 2; // Bounce back down
+                        player.vy = 2.5; // Bounce down
                         triggerQuizModal(blk.qData);
                     }
                 }
             });
 
-            // Boss Entity Collision (Level 3)
+            // Level 10 Boss Collision
             if (bossEntity && !bossEntity.defeated) {
                 if (
                     player.x + player.width >= bossEntity.x &&
@@ -960,7 +1178,7 @@
                 }
             }
 
-            // Data Coins Collection
+            // Coin Collections
             coinItems.forEach(coin => {
                 if (!coin.collected &&
                     player.x < coin.x + coin.width &&
@@ -970,31 +1188,31 @@
                 ) {
                     coin.collected = true;
                     coins++;
-                    score += 50;
+                    score += 100;
                     playSound('coin');
                     updateHud();
                 }
             });
 
-            // Enemy Logic & Collision
+            // Enemy Collision & Stomping
             enemies.forEach(en => {
                 if (!en.alive) return;
 
                 en.x += en.vx;
                 if (en.x < en.minX || en.x > en.maxX) en.vx *= -1;
 
-                // Player collision with enemy
                 if (
                     player.x < en.x + en.width &&
                     player.x + player.width > en.x &&
                     player.y < en.y + en.height &&
                     player.y + player.height > en.y
                 ) {
-                    // Jumping on enemy top
-                    if (player.vy > 0 && player.y + player.height < en.y + 15) {
+                    // Stomp on enemy
+                    if (player.vy > 0 && player.y + player.height < en.y + 14) {
                         en.alive = false;
-                        player.vy = -8;
-                        score += 150;
+                        player.vy = -9;
+                        player.jumpsRemaining = player.maxJumps;
+                        score += 200;
                         playSound('stomp');
                         updateHud();
                     } else {
@@ -1003,21 +1221,21 @@
                 }
             });
 
-            // Goal Pipe Collision
+            // Goal Pipe / Portal Advance
             if (
                 goalPipe &&
                 player.x < goalPipe.x + goalPipe.width &&
                 player.x + player.width > goalPipe.x &&
                 player.y + player.height >= goalPipe.y
             ) {
-                if (currentLevel < 3) {
+                if (currentLevel < 10) {
                     showNotification(`FASE ${currentLevel} CONCLUÍDA!`);
                     playSound('correct');
                     loadLevel(currentLevel + 1);
                 } else if (bossEntity && bossEntity.defeated) {
                     finishGameWin();
                 } else {
-                    showNotification("Derrote o Monstro do Relatório Caótico antes de avançar!");
+                    showNotification("Vença o Desafio do Chefão na Fase 10 para encerrar!");
                 }
             }
 
@@ -1048,9 +1266,14 @@
         }
 
         function updateHud() {
+            const totalQ = studentAnswers.length;
+            const correctQ = studentAnswers.filter(a => a.isCorrect).length;
+            const accuracy = totalQ > 0 ? Math.round((correctQ / totalQ) * 100) : 100;
+
             document.getElementById('hudLives').innerHTML = `<i class="fa-solid fa-heart"></i> x${lives}`;
             document.getElementById('hudCoins').innerHTML = `<i class="fa-solid fa-coins"></i> ${coins < 10 ? '0' + coins : coins}`;
             document.getElementById('hudScore').innerText = `PTS: ${score.toString().padStart(4, '0')}`;
+            document.getElementById('hudAccuracy').innerHTML = `<i class="fa-solid fa-bullseye"></i> ${accuracy}%`;
         }
 
         function showNotification(msg) {
@@ -1063,52 +1286,38 @@
         }
 
         /* ==========================================================================
-           7. RENDER ENGINE (CANVAS PIXEL ART DRAWING)
+           7. CANVAS RENDERING ENGINE
            ========================================================================== */
         function render() {
-            // Clear Background according to Level Theme
-            if (currentLevel === 1) {
-                ctx.fillStyle = '#5c94fc'; // Classic Sky Blue
-            } else if (currentLevel === 2) {
-                ctx.fillStyle = '#1e1b4b'; // Cavern Dark Blue
-            } else {
-                ctx.fillStyle = '#450a0a'; // Lava Castle Dark Red
-            }
+            const theme = levelThemes[currentLevel];
+
+            // Render Sky
+            ctx.fillStyle = theme.sky;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             ctx.save();
             ctx.translate(-cameraX, 0);
 
-            // Draw Background Deco (Clouds/Mountains/Matrix)
-            drawLevelBackgroundDeco();
+            // Draw Background Deco
+            drawBackgroundDeco(currentLevel);
 
             // Draw Platforms
             platforms.forEach(plat => {
-                if (currentLevel === 1) {
-                    ctx.fillStyle = '#16a34a'; // Grass top
-                    ctx.fillRect(plat.x, plat.y, plat.width, 8);
-                    ctx.fillStyle = '#b45309'; // Dirt block
-                    ctx.fillRect(plat.x, plat.y + 8, plat.width, plat.height - 8);
-                } else if (currentLevel === 2) {
-                    ctx.fillStyle = '#0284c7'; // Spreadsheet header style
-                    ctx.fillRect(plat.x, plat.y, plat.width, 6);
-                    ctx.fillStyle = '#334155';
-                    ctx.fillRect(plat.x, plat.y + 6, plat.width, plat.height - 6);
-                } else {
-                    ctx.fillStyle = '#991b1b'; // Castle Brick
-                    ctx.fillRect(plat.x, plat.y, plat.width, plat.height);
-                }
+                ctx.fillStyle = theme.ground;
+                ctx.fillRect(plat.x, plat.y, plat.width, 6);
+                ctx.fillStyle = theme.plat;
+                ctx.fillRect(plat.x, plat.y + 6, plat.width, plat.height - 6);
             });
 
             // Draw Question Blocks (?)
             questionBlocks.forEach(blk => {
-                ctx.fillStyle = blk.hit ? '#94a3b8' : '#eab308';
+                ctx.fillStyle = blk.hit ? '#64748b' : '#f59e0b';
                 ctx.fillRect(blk.x, blk.y, blk.width, blk.height);
                 ctx.strokeStyle = '#000';
                 ctx.lineWidth = 2;
                 ctx.strokeRect(blk.x, blk.y, blk.width, blk.height);
 
-                ctx.fillStyle = blk.hit ? '#475569' : '#000';
+                ctx.fillStyle = blk.hit ? '#334155' : '#000';
                 ctx.font = 'bold 16px "Press Start 2P"';
                 ctx.fillText('?', blk.x + 8, blk.y + 23);
             });
@@ -1125,12 +1334,11 @@
                 }
             });
 
-            // Draw Enemies (Corrupted Data Bugs)
+            // Draw Enemies (Data Bugs)
             enemies.forEach(en => {
                 if (en.alive) {
-                    ctx.fillStyle = '#ef4444'; // Red Bug
+                    ctx.fillStyle = '#ef4444';
                     ctx.fillRect(en.x, en.y + 6, en.width, en.height - 6);
-                    // Bug Eyes
                     ctx.fillStyle = '#fff';
                     ctx.fillRect(en.x + 4, en.y + 10, 6, 6);
                     ctx.fillRect(en.x + 18, en.y + 10, 6, 6);
@@ -1140,7 +1348,7 @@
                 }
             });
 
-            // Draw Boss Entity (Level 3)
+            // Draw Boss Entity in Level 10
             if (bossEntity && !bossEntity.defeated) {
                 ctx.fillStyle = '#dc2626';
                 ctx.fillRect(bossEntity.x, bossEntity.y, bossEntity.width, bossEntity.height);
@@ -1149,13 +1357,13 @@
                 ctx.strokeRect(bossEntity.x, bossEntity.y, bossEntity.width, bossEntity.height);
 
                 ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 10px "Press Start 2P"';
-                ctx.fillText('BOSS TGDQ', bossEntity.x + 5, bossEntity.y + 20);
-                ctx.fillText('RELATÓRIO', bossEntity.x + 5, bossEntity.y + 40);
-                ctx.fillText('CAÓTICO', bossEntity.x + 10, bossEntity.y + 60);
+                ctx.font = 'bold 9px "Press Start 2P"';
+                ctx.fillText('CHEFÃO TGDQ', bossEntity.x + 4, bossEntity.y + 25);
+                ctx.fillText('ESTUDO DE', bossEntity.x + 6, bossEntity.y + 55);
+                ctx.fillText('CASO INTEGRADO', bossEntity.x + 2, bossEntity.y + 85);
             }
 
-            // Draw Goal Pipe / Portal
+            // Draw Goal Pipe
             if (goalPipe) {
                 ctx.fillStyle = '#22c55e';
                 ctx.fillRect(goalPipe.x, goalPipe.y, goalPipe.width, goalPipe.height);
@@ -1163,41 +1371,37 @@
                 ctx.fillRect(goalPipe.x - 4, goalPipe.y, goalPipe.width + 8, 16);
             }
 
-            // Draw Player Character
+            // Draw Player Character Sprite
             drawPlayerSprite();
 
             ctx.restore();
         }
 
-        function drawLevelBackgroundDeco() {
-            if (currentLevel === 1) {
+        function drawBackgroundDeco(lvl) {
+            if (lvl === 1 || lvl === 2) {
                 // Clouds
-                ctx.fillStyle = '#ffffff';
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
                 ctx.beginPath();
-                ctx.arc(300, 100, 25, 0, Math.PI * 2);
-                ctx.arc(330, 90, 30, 0, Math.PI * 2);
-                ctx.arc(360, 100, 25, 0, Math.PI * 2);
+                ctx.arc(250, 90, 24, 0, Math.PI * 2);
+                ctx.arc(280, 80, 28, 0, Math.PI * 2);
+                ctx.arc(310, 90, 24, 0, Math.PI * 2);
                 ctx.fill();
-
-                ctx.beginPath();
-                ctx.arc(1100, 120, 25, 0, Math.PI * 2);
-                ctx.arc(1130, 110, 30, 0, Math.PI * 2);
-                ctx.fill();
-            } else if (currentLevel === 2) {
-                // Spreadsheet Grid Lines background
-                ctx.strokeStyle = '#312e81';
+            } else if (lvl === 3 || lvl === 9) {
+                // Grid lines background
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
                 ctx.lineWidth = 1;
-                for (let x = 0; x < levelWidth; x += 60) {
+                for (let x = 0; x < levelWidth; x += 50) {
                     ctx.beginPath();
                     ctx.moveTo(x, 0);
                     ctx.lineTo(x, 450);
                     ctx.stroke();
                 }
-            } else {
-                // Dashboard Charts background deco
-                ctx.fillStyle = 'rgba(239, 68, 68, 0.15)';
-                ctx.fillRect(200, 100, 120, 150);
-                ctx.fillRect(700, 80, 180, 180);
+            } else if (lvl === 10) {
+                // Lava Castle Pillars
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+                for (let x = 100; x < levelWidth; x += 300) {
+                    ctx.fillRect(x, 40, 40, 350);
+                }
             }
         }
 
@@ -1208,7 +1412,7 @@
             const isAlex = selectedAvatar === 'alex';
 
             // Character Body
-            ctx.fillStyle = isAlex ? '#2563eb' : '#9333ea'; // Blue vs Purple Suit
+            ctx.fillStyle = isAlex ? '#2563eb' : '#9333ea';
             ctx.fillRect(4, 12, 20, 18);
 
             // Head / Skin
@@ -1223,7 +1427,7 @@
                 ctx.fillRect(7, 5, 3, 4);
             }
 
-            // Analyst HardHat / Glasses
+            // Analyst Helmet
             ctx.fillStyle = '#eab308';
             ctx.fillRect(4, 0, 20, 4);
 
@@ -1244,7 +1448,7 @@
         }
 
         /* ==========================================================================
-           8. INTERACTIVE QUIZ & CHALLENGE SYSTEM
+           8. INTERACTIVE QUIZ MODAL LOGIC
            ========================================================================== */
         let activeQuiz = null;
         let isBossQuizActive = false;
@@ -1254,8 +1458,8 @@
             activeQuiz = qData;
             isBossQuizActive = isBoss;
 
-            document.getElementById('quizCategoryBadge').innerText = isBoss ? "🔥 DESAFIO DO CHEFÃO FINAL" : "DESAFIO CONCEITUAL TGDQ";
-            document.getElementById('quizLevelBadge').innerText = `FASE ${currentLevel}`;
+            document.getElementById('quizCategoryBadge').innerText = isBoss ? "🔥 DESAFIO DO CHEFÃO FINAL (FASE 10)" : "DESAFIO CONCEITUAL TGDQ";
+            document.getElementById('quizLevelBadge').innerText = `FASE ${currentLevel}/10`;
             document.getElementById('quizQuestionText').innerText = qData.question;
 
             const optsContainer = document.getElementById('quizOptionsContainer');
@@ -1282,7 +1486,6 @@
             const feedbackTitle = document.getElementById('quizFeedbackTitle');
             const feedbackText = document.getElementById('quizFeedbackText');
 
-            // Log Student Answer for Report
             studentAnswers.push({
                 level: currentLevel,
                 questionId: activeQuiz.id,
@@ -1293,10 +1496,10 @@
             });
 
             if (isCorrect) {
-                score += isBossQuizActive ? 500 : 250;
+                score += isBossQuizActive ? 600 : 300;
                 playSound('correct');
                 feedbackBox.className = "rounded-xl p-4 text-xs sm:text-sm border bg-emerald-950/80 border-emerald-500 text-emerald-200";
-                feedbackTitle.innerText = "✓ RESPOSTA CORRETA (+ " + (isBossQuizActive ? 500 : 250) + " PTS)";
+                feedbackTitle.innerText = "✓ RESPOSTA CORRETA (+ " + (isBossQuizActive ? 600 : 300) + " PTS)";
                 feedbackText.innerText = activeQuiz.explanation;
 
                 if (isBossQuizActive && bossEntity) {
@@ -1327,12 +1530,12 @@
         }
 
         /* ==========================================================================
-           9. GAME COMPLETION & REPORT GENERATION
+           9. GAME COMPLETION & FINAL EXECUTIVE REPORT
            ========================================================================== */
         function finishGameWin() {
             gameState = 'WIN';
             playSound('correct');
-            showNotification("PARABÉNS! VOCÊ CONCLUIU O DESAFIO TGDQ!");
+            showNotification("PARABÉNS! VOCÊ COMPLETOU AS 10 FASES DO TGDQ!");
             setTimeout(() => {
                 openReportModal();
             }, 1000);
@@ -1341,96 +1544,83 @@
         function openReportModal() {
             document.getElementById('reportModal').style.display = 'flex';
 
-            // Calculate Metrics
             const totalQuestions = studentAnswers.length;
             const correctCount = studentAnswers.filter(a => a.isCorrect).length;
             const accuracyPct = totalQuestions > 0 ? Math.round((correctCount / totalQuestions) * 100) : 0;
+            const finalGrade = (accuracyPct / 10).toFixed(1);
             const timeElapsed = 300 - gameTimer;
 
+            document.getElementById('repGrade').innerText = finalGrade;
             document.getElementById('repTotalScore').innerText = score;
             document.getElementById('repAccuracy').innerText = `${accuracyPct}%`;
             document.getElementById('repCoins').innerText = coins;
             document.getElementById('repTime').innerText = `${timeElapsed}s`;
 
-            // Performance per Module
-            const l1Count = studentAnswers.filter(a => a.level === 1 && a.isCorrect).length;
-            const l2Count = studentAnswers.filter(a => a.level === 2 && a.isCorrect).length;
-            const l3Count = studentAnswers.filter(a => a.level === 3 && a.isCorrect).length;
+            // Breakdown by Level 1 to 10
+            const breakdownContainer = document.getElementById('repLevelBreakdown');
+            breakdownContainer.innerHTML = '';
 
-            document.getElementById('mod1Perf').innerText = `${l1Count}/4 Acertos`;
-            document.getElementById('mod2Perf').innerText = `${l2Count}/4 Acertos`;
-            document.getElementById('mod3Perf').innerText = `${l3Count}/4 Acertos`;
+            for (let i = 1; i <= 10; i++) {
+                const lvlAns = studentAnswers.filter(a => a.level === i);
+                const lvlCorrect = lvlAns.filter(a => a.isCorrect).length;
+                const lvlTotal = lvlAns.length;
+                const statusStr = lvlTotal > 0 ? `${lvlCorrect}/${lvlTotal} Acertos` : 'N/A';
 
-            // Certification Badge logic
+                const item = document.createElement('div');
+                item.className = "bg-slate-800/40 p-2 rounded-lg flex justify-between items-center border border-slate-700/50";
+                item.innerHTML = `
+                    <span class="truncate max-w-[200px]">Fase ${i}: ${levelThemes[i].name}</span>
+                    <span class="font-bold ${lvlCorrect === lvlTotal && lvlTotal > 0 ? 'text-emerald-400' : 'text-yellow-400'}">${statusStr}</span>
+                `;
+                breakdownContainer.appendChild(item);
+            }
+
+            // Pedagogical comment generator
+            const commentElem = document.getElementById('repTeacherComment');
+            if (accuracyPct >= 90) {
+                commentElem.innerText = "Excelente desempenho! O aluno domina perfeitamente a análise de dados, funções de pesquisa, estatística e tomada de decisão estratégica no ciclo TGDQ.";
+            } else if (accuracyPct >= 70) {
+                commentElem.innerText = "Bom desempenho! O aluno compreendeu bem os conceitos centrais de TGDQ e aplicou corretamente o Fio Condutor da decisão.";
+            } else {
+                commentElem.innerText = "Desempenho regular. Recomenda-se revisar as funções de pesquisa (PROCV/PROCX) e os conceitos de estatística descritiva e auditoria de dados.";
+            }
+
+            // Certification Seal
             const sealElem = document.getElementById('certificationSeal');
             if (accuracyPct >= 80) {
                 sealElem.className = "bg-emerald-500 text-slate-950 font-pixel text-xs px-3 py-2 rounded-lg shadow font-bold text-center";
-                sealElem.innerText = "SELO OURO: MESTRE DOS DADOS SENAI";
-            } else if (accuracyPct >= 50) {
+                sealElem.innerText = "CERTIFICADO OURO TGDQ - SENAI";
+            } else {
                 sealElem.className = "bg-amber-500 text-slate-950 font-pixel text-xs px-3 py-2 rounded-lg shadow font-bold text-center";
-                sealElem.innerText = "SELO PRATA: ANALISTA DE DADOS TGDQ";
-            } else {
-                sealElem.className = "bg-slate-700 text-slate-200 font-pixel text-xs px-3 py-2 rounded-lg shadow font-bold text-center";
-                sealElem.innerText = "SELO BRONZE: ASSISTENTE EM FORMAÇÃO";
-            }
-
-            // Question Log Injection
-            const logContainer = document.getElementById('repQuestionLog');
-            logContainer.innerHTML = '';
-
-            if (studentAnswers.length === 0) {
-                logContainer.innerHTML = "<p class='text-slate-400'>Nenhuma questão foi respondida nesta sessão.</p>";
-            } else {
-                studentAnswers.forEach((ans, idx) => {
-                    const item = document.createElement('div');
-                    item.className = `p-2.5 rounded-lg border ${ans.isCorrect ? 'bg-emerald-950/40 border-emerald-800/50' : 'bg-red-950/40 border-red-800/50'}`;
-                    item.innerHTML = `
-                        <div class="flex justify-between font-bold mb-1">
-                            <span>Questão ${idx + 1} (Fase ${ans.level})</span>
-                            <span class="${ans.isCorrect ? 'text-emerald-400' : 'text-red-400'}">${ans.isCorrect ? '✓ Correto' : '✗ Incorreto'}</span>
-                        </div>
-                        <p class="text-slate-300 mb-1"><strong>P:</strong> ${ans.question}</p>
-                        <p class="text-slate-400"><strong>Sua resposta:</strong> ${ans.selectedOption}</p>
-                    `;
-                    logContainer.appendChild(item);
-                });
+                sealElem.innerText = "CERTIFICADO PRATA TGDQ - SENAI";
             }
         }
 
         function copyReportToClipboard() {
             const studentName = document.getElementById('studentName').value || 'Aluno Não Identificado';
             const studentClass = document.getElementById('studentClass').value || 'Turma SENAI';
-            const totalScore = document.getElementById('repTotalScore').innerText;
-            const accuracy = document.getElementById('repAccuracy').innerText;
-            const coinsVal = document.getElementById('repCoins').innerText;
-            const timeVal = document.getElementById('repTime').innerText;
+            const grade = document.getElementById('repGrade').innerText;
+            const scoreVal = document.getElementById('repTotalScore').innerText;
+            const accuracyVal = document.getElementById('repAccuracy').innerText;
 
             let textReport = `====================================================\n`;
-            textReport += `RELATÓRIO DE DESEMPENHO EXECUTIVO - TGDQ SENAI\n`;
+            textReport += `RELATÓRIO DE DESEMPENHO EXECUTIVO (10 FASES) - TGDQ SENAI\n`;
             textReport += `====================================================\n`;
             textReport += `Aluno: ${studentName}\n`;
             textReport += `Turma/Unidade: ${studentClass}\n`;
-            textReport += `Data de Conclusão: ${new Date().toLocaleDateString('pt-BR')}\n`;
+            textReport += `Data: ${new Date().toLocaleDateString('pt-BR')}\n`;
             textReport += `----------------------------------------------------\n`;
-            textReport += `MÉTRICAS GERAIS:\n`;
-            textReport += `- Pontuação Final: ${totalScore} PTS\n`;
-            textReport += `- Taxa de Acerto: ${accuracy}\n`;
-            textReport += `- Moedas de Dados Coletadas: ${coinsVal}\n`;
-            textReport += `- Tempo Total de Jogo: ${timeVal}\n`;
-            textReport += `----------------------------------------------------\n`;
-            textReport += `DESEMPENHO POR MÓDULO:\n`;
-            textReport += `- Fase 1 (Fundamentos/OLTP/OLAP): ${document.getElementById('mod1Perf').innerText}\n`;
-            textReport += `- Fase 2 (Planilhas/PROCV/Estatística): ${document.getElementById('mod2Perf').innerText}\n`;
-            textReport += `- Fase 3 (KPIs/Castelo da Decisão): ${document.getElementById('mod3Perf').innerText}\n`;
-            textReport += `----------------------------------------------------\n`;
-            textReport += `CICLO FIO CONDUTOR CUMPRIDO:\n`;
-            textReport += `DADO -> TRATAMENTO -> ANÁLISE -> INDICADOR -> INTERPRETAÇÃO -> DECISÃO -> AÇÃO\n`;
+            textReport += `RESULTADO:\n`;
+            textReport += `- Nota Final TGDQ: ${grade} / 10.0\n`;
+            textReport += `- Pontuação Total: ${scoreVal} PTS\n`;
+            textReport += `- Porcentagem de Precisão: ${accuracyVal}\n`;
+            textReport += `- Parecer: ${document.getElementById('repTeacherComment').innerText}\n`;
             textReport += `====================================================\n`;
 
             navigator.clipboard.writeText(textReport).then(() => {
-                alert("Relatório formatado copiado para a área de transferência! Cole no Google Drive / Google Classroom do seu instrutor.");
+                alert("Relatório formatado copiado! Cole no Google Drive / Google Classroom do seu professor.");
             }).catch(() => {
-                alert("Erro ao copiar automaticamente. Por favor, tire um print ou salve em PDF.");
+                alert("Erro ao copiar. Utilize o botão 'Imprimir / PDF' para salvar.");
             });
         }
 
@@ -1444,7 +1634,6 @@
             gameState = 'START';
         }
 
-        // Initialize setup on window load
         window.onload = function() {
             setupControls();
         };
