@@ -1,0 +1,1453 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super TGDQ Bros: O Desafio dos Dados - SENAI</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Pixel & Game Style -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rajdhani:wght@500;600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome CDN for Retro Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            user-select: none;
+            overflow-x: hidden;
+        }
+        .font-pixel {
+            font-family: 'Press Start 2P', monospace;
+        }
+        .font-tech {
+            font-family: 'Rajdhani', sans-serif;
+        }
+        
+        /* Pixelated canvas rendering */
+        canvas {
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+            background-color: #5c94fc;
+        }
+
+        /* Touch Control Buttons styling */
+        .d-pad-btn {
+            background: linear-gradient(145deg, #334155, #1e293b);
+            border: 2px solid #475569;
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.1), 0 4px 6px rgba(0,0,0,0.4);
+            touch-action: manipulation;
+        }
+        .d-pad-btn:active {
+            transform: scale(0.92);
+            background: #0284c7;
+        }
+
+        .action-btn {
+            background: linear-gradient(145deg, #ef4444, #dc2626);
+            border: 2px solid #fca5a5;
+            box-shadow: 0 4px 0 #991b1b, 0 6px 10px rgba(0,0,0,0.3);
+            touch-action: manipulation;
+        }
+        .action-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 #991b1b;
+        }
+
+        /* Scanline effect overlay */
+        .scanline {
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%, 
+                rgba(0, 0, 0, 0.25) 50%
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #0284c7;
+        }
+
+        /* Print styles for Report export */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #reportModal, #reportModal * {
+                visibility: visible;
+            }
+            #reportModal {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                background: white !important;
+                color: black !important;
+                padding: 20px;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between items-center p-2 sm:p-4 bg-slate-950 text-slate-100">
+
+    <!-- HEADER / LOGO BAR -->
+    <header class="w-full max-w-5xl flex flex-wrap justify-between items-center gap-3 bg-slate-900 border border-slate-800 rounded-xl p-3 sm:p-4 shadow-lg mb-2">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center font-pixel text-white text-xl shadow-md border-2 border-red-400">
+                <i class="fa-solid fa-cubes-stacked"></i>
+            </div>
+            <div>
+                <h1 class="font-pixel text-xs sm:text-sm md:text-base text-yellow-400 tracking-wider">SUPER TGDQ BROS</h1>
+                <p class="text-xs text-slate-400 font-tech">SENAI • Tratamento e Gerenciamento de Dados Quantitativos</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-2">
+            <span class="bg-blue-900/60 border border-blue-500/30 text-blue-300 text-xs px-3 py-1 rounded-full font-semibold">
+                <i class="fa-solid fa-graduation-cap mr-1"></i> Assistente Administrativo
+            </span>
+            <button id="soundToggleBtn" onclick="toggleAudio()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 p-2 rounded-lg border border-slate-700 transition" title="Ativar/Desativar Som">
+                <i id="soundIcon" class="fa-solid fa-volume-high text-yellow-400"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN GAME CONTAINER -->
+    <main class="w-full max-w-5xl flex flex-col items-center justify-center relative my-auto">
+        
+        <!-- HUD / GAME STATS BAR -->
+        <div id="gameHud" class="w-full bg-slate-900/90 border-t-2 border-x-2 border-slate-700 rounded-t-xl p-2 sm:p-3 flex flex-wrap justify-between items-center gap-2 text-xs sm:text-sm font-pixel text-slate-200">
+            <div class="flex items-center space-x-3">
+                <span class="text-red-400 flex items-center gap-1" id="hudLives"><i class="fa-solid fa-heart"></i> x3</span>
+                <span class="text-yellow-400 flex items-center gap-1" id="hudCoins"><i class="fa-solid fa-coins"></i> 00</span>
+                <span class="text-sky-400" id="hudScore">PTS: 0000</span>
+            </div>
+            <div class="flex items-center space-x-3">
+                <span id="hudLevelName" class="text-emerald-400 font-semibold">FASE 1: O Reino dos Dados Brutos</span>
+                <span class="text-slate-400" id="hudTimer"><i class="fa-regular fa-clock"></i> 300s</span>
+            </div>
+        </div>
+
+        <!-- CANVAS FRAME -->
+        <div class="relative w-full aspect-[16/9] max-h-[520px] bg-black rounded-b-xl overflow-hidden border-2 border-slate-700 shadow-2xl">
+            <canvas id="gameCanvas" width="800" height="450" class="w-full h-full block"></canvas>
+            <div class="scanline absolute inset-0"></div>
+
+            <!-- START SCREEN OVERLAY -->
+            <div id="startScreen" class="absolute inset-0 bg-slate-950/95 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center z-20">
+                <div class="animate-bounce mb-3">
+                    <span class="inline-block bg-yellow-500 text-slate-950 font-pixel px-4 py-2 rounded-md text-xs sm:text-sm shadow-lg font-bold">EDIÇÃO SENAI 2026</span>
+                </div>
+                <h2 class="font-pixel text-xl sm:text-3xl text-yellow-400 mb-2 drop-shadow-md">SUPER TGDQ BROS</h2>
+                <p class="font-tech text-lg text-slate-300 max-w-xl mb-4">
+                    Embarque no ciclo: <span class="text-sky-400 font-bold">DADO &rarr; TRATAMENTO &rarr; ANÁLISE &rarr; INDICADOR &rarr; INTERPRETAÇÃO &rarr; DECISÃO &rarr; AÇÃO</span>.
+                </p>
+
+                <!-- AVATAR SELECTION -->
+                <div class="mb-5 w-full max-w-md bg-slate-900 border border-slate-800 p-3 rounded-xl">
+                    <p class="text-xs font-pixel text-slate-400 mb-2">ESCOLHA SEU ANALISTA DE DADOS:</p>
+                    <div class="flex justify-center gap-4">
+                        <button onclick="selectAvatar('alex')" id="btnAvatarAlex" class="avatar-btn border-2 border-yellow-400 bg-slate-800 p-2 rounded-lg flex items-center space-x-2 transition">
+                            <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-xs">👨‍💼</div>
+                            <span class="text-xs font-semibold">Alex (Analista)</span>
+                        </button>
+                        <button onclick="selectAvatar('beatriz')" id="btnAvatarBeatriz" class="avatar-btn border-2 border-transparent bg-slate-800 p-2 rounded-lg flex items-center space-x-2 transition">
+                            <div class="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center text-white font-bold text-xs">👩‍💼</div>
+                            <span class="text-xs font-semibold">Beatriz (Auditora)</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <button onclick="startGame()" class="font-pixel bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-6 py-3 rounded-xl shadow-lg border-b-4 border-emerald-700 active:translate-y-1 transition text-sm sm:text-base font-bold">
+                        <i class="fa-solid fa-play mr-2"></i> INICIAR DESAFIO
+                    </button>
+                    <button onclick="toggleInstructionsModal(true)" class="font-pixel bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-3 rounded-xl border border-slate-600 text-xs sm:text-sm">
+                        <i class="fa-solid fa-book-open mr-2"></i> INSTRUÇÕES
+                    </button>
+                </div>
+            </div>
+
+            <!-- PAUSE / IN-GAME MODAL NOTIFICATION -->
+            <div id="gameNotification" class="hidden absolute top-4 left-1/2 -translate-x-1/2 bg-yellow-500 text-slate-950 font-pixel text-xs px-4 py-2 rounded-lg shadow-xl border-2 border-yellow-300 z-30 animate-bounce">
+                Mensagem
+            </div>
+        </div>
+
+        <!-- VIRTUAL CONTROLS FOR MOBILE / TOUCH -->
+        <div class="w-full flex justify-between items-center mt-3 px-2 sm:px-6 select-none md:hidden">
+            <!-- D-PAD -->
+            <div class="flex gap-2">
+                <button id="btnLeft" class="d-pad-btn w-12 h-12 rounded-xl text-white text-xl flex items-center justify-center">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <button id="btnRight" class="d-pad-btn w-12 h-12 rounded-xl text-white text-xl flex items-center justify-center">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+            <!-- ACTION BUTTONS -->
+            <div class="flex gap-3">
+                <button id="btnJump" class="action-btn w-14 h-14 rounded-full text-white font-pixel text-xs flex items-center justify-center">
+                    PULO
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- INSTRUCTIONS MODAL -->
+    <div id="instructionsModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md hidden justify-center items-center p-4 z-50">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-lg w-full p-6 relative text-slate-200 space-y-4">
+            <button onclick="toggleInstructionsModal(false)" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <h3 class="font-pixel text-yellow-400 text-lg flex items-center gap-2">
+                <i class="fa-solid fa-circle-info"></i> Como Jogar?
+            </h3>
+            <ul class="text-sm space-y-2 text-slate-300">
+                <li><i class="fa-solid fa-keyboard text-sky-400 mr-2"></i> <strong>Teclado:</strong> Use as Setas (<kbd class="bg-slate-800 px-1 border border-slate-600 rounded">←</kbd> <kbd class="bg-slate-800 px-1 border border-slate-600 rounded">→</kbd>) ou <kbd class="bg-slate-800 px-1 border border-slate-600 rounded">A</kbd>/<kbd class="bg-slate-800 px-1 border border-slate-600 rounded">D</kbd> para mover. Tecla <kbd class="bg-slate-800 px-1 border border-slate-600 rounded">Espaço</kbd>, <kbd class="bg-slate-800 px-1 border border-slate-600 rounded">↑</kbd> ou <kbd class="bg-slate-800 px-1 border border-slate-600 rounded">W</kbd> para pular.</li>
+                <li><i class="fa-solid fa-mobile-screen text-sky-400 mr-2"></i> <strong>Touch:</strong> Utilize os botões virtuais na tela.</li>
+                <li><i class="fa-solid fa-cubes text-yellow-400 mr-2"></i> <strong>Blocos de Pergunta (?):</strong> Pule por baixo para responder aos desafios conceituais de TGDQ. Cada acerto soma pontos!</li>
+                <li><i class="fa-solid fa-bug text-red-400 mr-2"></i> <strong>Bugs / Dados Corrompidos:</strong> Pule em cima dos inimigos para eliminá-los ou desvie.</li>
+                <li><i class="fa-solid fa-flag-checkered text-emerald-400 mr-2"></i> <strong>Objetivo:</strong> Complete as 3 fases, vença o Chefão na Fase 3 e gere o seu Relatório de Desempenho para enviar ao instrutor!</li>
+            </ul>
+            <div class="text-center pt-2">
+                <button onclick="toggleInstructionsModal(false)" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold px-5 py-2 rounded-lg text-sm">Entendido!</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- QUIZ / CHALLENGE INTERACTIVE MODAL -->
+    <div id="quizModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md hidden justify-center items-center p-4 z-50">
+        <div class="bg-slate-900 border-2 border-yellow-500 rounded-2xl max-w-xl w-full p-5 sm:p-6 shadow-2xl relative text-slate-100 flex flex-col space-y-4">
+            
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <span id="quizCategoryBadge" class="bg-yellow-500/20 text-yellow-300 border border-yellow-500/40 text-xs px-3 py-1 rounded-full font-pixel">
+                    DESAFIO TGDQ
+                </span>
+                <span id="quizLevelBadge" class="text-xs text-slate-400 font-tech font-bold uppercase">
+                    Fase 1
+                </span>
+            </div>
+
+            <div id="quizQuestionContainer">
+                <h3 id="quizQuestionText" class="text-base sm:text-lg font-semibold text-slate-100 mb-4 leading-snug">
+                    Carregando pergunta...
+                </h3>
+
+                <div id="quizOptionsContainer" class="space-y-2.5">
+                    <!-- Dynamic Option Buttons -->
+                </div>
+            </div>
+
+            <!-- FEEDBACK AREA -->
+            <div id="quizFeedback" class="hidden rounded-xl p-4 text-xs sm:text-sm border transition">
+                <p id="quizFeedbackTitle" class="font-pixel text-sm mb-1"></p>
+                <p id="quizFeedbackText" class="text-slate-200 leading-relaxed"></p>
+                <button id="btnContinueQuiz" onclick="closeQuizModal()" class="mt-3 font-pixel bg-yellow-500 hover:bg-yellow-400 text-slate-950 px-4 py-2 rounded-lg text-xs font-bold transition">
+                    CONTINUAR JOGO &rarr;
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- PERFORMANCE REPORT MODAL (FINAL DO JOGO) -->
+    <div id="reportModal" class="fixed inset-0 bg-slate-950/95 backdrop-blur-lg hidden justify-center items-center p-2 sm:p-4 z-50 overflow-y-auto">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-3xl w-full p-4 sm:p-8 shadow-2xl my-auto text-slate-100 space-y-6">
+            
+            <!-- HEADER DO RELATÓRIO -->
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-800 pb-4 gap-3">
+                <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white text-2xl font-pixel shadow-md">
+                        <i class="fa-solid fa-chart-pie"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg sm:text-2xl font-bold font-tech text-yellow-400">RELATÓRIO DE DESEMPENHO EXECUTIVO</h2>
+                        <p class="text-xs text-slate-400">Unidade Curricular: Tratamento e Gerenciamento de Dados Quantitativos (TGDQ)</p>
+                    </div>
+                </div>
+                <div id="certificationSeal" class="bg-gradient-to-r from-amber-500 to-yellow-600 text-slate-950 font-pixel text-xs px-3 py-2 rounded-lg shadow font-bold text-center">
+                    SELO DE APROVAÇÃO SENAI
+                </div>
+            </div>
+
+            <!-- IDENTIFICAÇÃO DO ALUNO -->
+            <div class="bg-slate-800/80 border border-slate-700 p-4 rounded-xl space-y-3">
+                <h4 class="text-xs font-pixel text-sky-400 uppercase"><i class="fa-solid fa-user-pen mr-1"></i> Identificação do Aluno</h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Nome Completo do Aluno:</label>
+                        <input type="text" id="studentName" placeholder="Digite seu nome completo..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-yellow-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Turma / Unidade SENAI:</label>
+                        <input type="text" id="studentClass" placeholder="Ex: Assistente Administrativo - Turma 2026.1" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-yellow-500">
+                    </div>
+                </div>
+            </div>
+
+            <!-- RESUMO MÉTRICAS DE JOGO -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+                <div class="bg-slate-800/50 border border-slate-700 p-3 rounded-xl">
+                    <span class="block text-xs text-slate-400">Pontuação Total</span>
+                    <span id="repTotalScore" class="text-xl font-bold font-pixel text-yellow-400">0</span>
+                </div>
+                <div class="bg-slate-800/50 border border-slate-700 p-3 rounded-xl">
+                    <span class="block text-xs text-slate-400">Taxa de Acerto</span>
+                    <span id="repAccuracy" class="text-xl font-bold font-pixel text-emerald-400">0%</span>
+                </div>
+                <div class="bg-slate-800/50 border border-slate-700 p-3 rounded-xl">
+                    <span class="block text-xs text-slate-400">Moedas de Dados</span>
+                    <span id="repCoins" class="text-xl font-bold font-pixel text-sky-400">0</span>
+                </div>
+                <div class="bg-slate-800/50 border border-slate-700 p-3 rounded-xl">
+                    <span class="block text-xs text-slate-400">Tempo Total</span>
+                    <span id="repTime" class="text-xl font-bold font-pixel text-purple-400">0s</span>
+                </div>
+            </div>
+
+            <!-- DETALHAMENTO POR MÓDULO DO PCA -->
+            <div class="space-y-2">
+                <h4 class="text-xs font-pixel text-slate-300 uppercase"><i class="fa-solid fa-layer-group mr-1"></i> Desempenho por Módulo de Conhecimento</h4>
+                <div class="space-y-2 text-xs sm:text-sm">
+                    <div class="bg-slate-800/40 p-2.5 rounded-lg flex justify-between items-center border border-slate-700/50">
+                        <span>Fase 1: Fundamentos, OLTP/OLAP e Auditoria</span>
+                        <span id="mod1Perf" class="font-bold text-sky-400">0/4 Acertos</span>
+                    </div>
+                    <div class="bg-slate-800/40 p-2.5 rounded-lg flex justify-between items-center border border-slate-700/50">
+                        <span>Fase 2: Planilhas (PROCV, SE) e Estatística Descritiva</span>
+                        <span id="mod2Perf" class="font-bold text-emerald-400">0/4 Acertos</span>
+                    </div>
+                    <div class="bg-slate-800/40 p-2.5 rounded-lg flex justify-between items-center border border-slate-700/50">
+                        <span>Fase 3: KPIs, DW, Decisão Estratégica & Estudo de Caso</span>
+                        <span id="mod3Perf" class="font-bold text-purple-400">0/4 Acertos</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LOG DE PERGUNTAS E RECOMENDAÇÕES PEDAGÓGICAS -->
+            <div class="space-y-2">
+                <h4 class="text-xs font-pixel text-slate-300 uppercase"><i class="fa-solid fa-clipboard-check mr-1"></i> Histórico de Respostas & Recomendações</h4>
+                <div id="repQuestionLog" class="max-h-48 overflow-y-auto space-y-2 border border-slate-800 p-2 rounded-xl bg-slate-950/50 text-xs">
+                    <!-- Log Injected Dynamic -->
+                </div>
+            </div>
+
+            <!-- FIO CONDUTOR VALIDAÇÃO FINAL -->
+            <div class="bg-blue-950/40 border border-blue-800/50 p-3 rounded-xl text-xs text-blue-200">
+                <p class="font-bold mb-1"><i class="fa-solid fa-diagram-project mr-1"></i> Domínio do Fio Condutor TGDQ:</p>
+                <p>O aluno demonstrou capacidade prática de transformar <strong>DADOS</strong> brutos em <strong>INFORMAÇÕES</strong> tratadas, calculando <strong>INDICADORES</strong> estratégicos para orientar <strong>INTERPRETAÇÕES</strong> e tomadas de <strong>DECISÃO</strong> na rotina administrativa.</p>
+            </div>
+
+            <!-- AÇÕES E BOTÕES -->
+            <div class="flex flex-wrap gap-3 justify-end pt-2 no-print">
+                <button onclick="copyReportToClipboard()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm flex items-center gap-2 transition">
+                    <i class="fa-solid fa-copy"></i> Copiar Texto Formatado
+                </button>
+                <button onclick="printReport()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm flex items-center gap-2 transition">
+                    <i class="fa-solid fa-print"></i> Imprimir / PDF
+                </button>
+                <button onclick="restartGameFull()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm border border-slate-600 transition">
+                    <i class="fa-solid fa-rotate-right"></i> Jogue Novamente
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="w-full max-w-5xl text-center py-2 text-xs text-slate-500">
+        Desenvolvido para o Curso de Aprendizagem Industrial SENAI — Assistente Administrativo • TGDQ 2026
+    </footer>
+
+    <!-- GAME ENGINE & LOGIC SCRIPT -->
+    <script>
+        /* ==========================================================================
+           1. AUDIO SYNTHESIZER (WEB AUDIO API)
+           ========================================================================== */
+        let audioCtx = null;
+        let isAudioMuted = false;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playSound(type) {
+            if (isAudioMuted) return;
+            try {
+                initAudio();
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+
+                const now = audioCtx.currentTime;
+
+                if (type === 'jump') {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(150, now);
+                    osc.frequency.exponentialRampToValueAtTime(400, now + 0.15);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.linearRampToValueAtTime(0, now + 0.15);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.15);
+                } else if (type === 'coin') {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(987.77, now); // B5
+                    osc.frequency.setValueAtTime(1318.51, now + 0.08); // E6
+                    gain.gain.setValueAtTime(0.12, now);
+                    gain.gain.linearRampToValueAtTime(0, now + 0.25);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.25);
+                } else if (type === 'correct') {
+                    [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+                        osc.type = 'triangle';
+                        osc.frequency.setValueAtTime(freq, now + i * 0.07);
+                        gain.gain.setValueAtTime(0.1, now + i * 0.07);
+                        gain.gain.linearRampToValueAtTime(0, now + i * 0.07 + 0.15);
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.start(now + i * 0.07);
+                        osc.stop(now + i * 0.07 + 0.15);
+                    });
+                } else if (type === 'wrong') {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(200, now);
+                    osc.frequency.linearRampToValueAtTime(100, now + 0.3);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.linearRampToValueAtTime(0, now + 0.3);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.3);
+                } else if (type === 'stomp') {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(120, now);
+                    osc.frequency.exponentialRampToValueAtTime(40, now + 0.1);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.linearRampToValueAtTime(0, now + 0.1);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.1);
+                }
+            } catch (e) {
+                console.log("Audio not allowed yet");
+            }
+        }
+
+        function toggleAudio() {
+            isAudioMuted = !isAudioMuted;
+            const icon = document.getElementById('soundIcon');
+            if (isAudioMuted) {
+                icon.className = "fa-solid fa-volume-xmark text-slate-500";
+            } else {
+                icon.className = "fa-solid fa-volume-high text-yellow-400";
+                playSound('coin');
+            }
+        }
+
+        /* ==========================================================================
+           2. TGDQ CURRICULUM QUIZ DATA BANK
+           ========================================================================== */
+        const quizData = {
+            1: [
+                {
+                    id: "l1_q1",
+                    question: "No contexto de TGDQ, o que representa o número isolado '1500' sem nenhuma rotulagem ou contexto?",
+                    options: [
+                        "Um Conhecimento estratégico de mercado.",
+                        "Um Dado bruto que necessita de tratamento.",
+                        "Uma Informação completa para tomada de decisão.",
+                        "Um Indicador de Margem de Lucro."
+                    ],
+                    correct: 1,
+                    explanation: "Excelente! Um dado isolado sem contexto é apenas um Dado Bruto. Quando contextualizado (ex: R$ 1.500 de vendas em agosto), ele se transforma em Informação!"
+                },
+                {
+                    id: "l1_q2",
+                    question: "Bases de dados relacionais e tabelas com colunas e linhas bem definidas (como SQL ou Excel) são classificadas como:",
+                    options: [
+                        "Dados Não Estruturados.",
+                        "Dados Estruturados.",
+                        "Dados Informais.",
+                        "Dados Causalísticos."
+                    ],
+                    correct: 1,
+                    explanation: "Correto! Dados Estruturados possuem formato rígido e organizado em linhas/colunas. Já arquivos de áudio, PDFs e e-mails são não estruturados."
+                },
+                {
+                    id: "l1_q3",
+                    question: "Qual a diferença fundamental entre um sistema OLTP e um sistema OLAP?",
+                    options: [
+                        "OLTP foca em registrar operações diárias (transacional); OLAP em análise de grandes volumes para decisão.",
+                        "OLTP cria gráficos; OLAP serve apenas para digitar formulas simples.",
+                        "OLTP trata dados não estruturados; OLAP apaga dados antigos.",
+                        "Ambos possuem a mesma função sem divergência técnica."
+                    ],
+                    correct: 0,
+                    explanation: "Perfeito! OLTP (Online Transaction Processing) registra vendas/operações em tempo real. OLAP (Online Analytical Processing) analisa dados históricos para apoiar decisões."
+                },
+                {
+                    id: "l1_q4",
+                    question: "Durante a auditoria de dados econômicos, você nota uma inconsistência em uma série histórica. Qual o primeiro passo?",
+                    options: [
+                        "Apagar os números imediatamente sem conferir.",
+                        "Conferir as fontes originais, unidades de medida e o período correspondente.",
+                        "Alterar os dados para que se adequem à sua opinião pessoal.",
+                        "Criar um gráfico bonitinho para disfarçar o erro."
+                    ],
+                    correct: 1,
+                    explanation: "Exato! Na Auditoria de Dados, sempre conferimos a confiabilidade das fontes, unidades de medida e prazos antes de revisar conclusões!"
+                }
+            ],
+            2: [
+                {
+                    id: "l2_q1",
+                    question: "Em planilhas eletrônicas, qual função de pesquisa vertical é amplamente utilizada para buscar valores numa tabela chave?",
+                    options: [
+                        "SOMAQUDRADO",
+                        "PROCV / PROCX",
+                        "CONT.SE",
+                        "CONCATENAR"
+                    ],
+                    correct: 1,
+                    explanation: "Muito bem! O PROCV (e o moderno PROCX) busca um valor em uma coluna e retorna informações correspondentes de outra coluna da mesma linha."
+                },
+                {
+                    id: "l2_q2",
+                    question: "Em estatística descritiva, qual medida de tendência central representa o valor que OCORRE COM MAIOR FREQUÊNCIA numa série?",
+                    options: [
+                        "Média Aritmética",
+                        "Mediana",
+                        "Moda",
+                        "Desvio Padrão"
+                    ],
+                    correct: 2,
+                    explanation: "Correto! A Moda é o valor mais frequente da distribuição. A Mediana é o valor central e a Média é a soma dividida pelo total."
+                },
+                {
+                    id: "l2_q3",
+                    question: "Uma empresa registrou Receita Total de R$ 50.000 e Custos Totais de R$ 30.000. Qual a sua Margem de Lucro Percentual?",
+                    options: [
+                        "20%",
+                        "40%",
+                        "60%",
+                        "30%"
+                    ],
+                    correct: 1,
+                    explanation: "Exato! Lucro = R$ 20.000 (50.000 - 30.000). Margem = Lucro / Receita = 20.000 / 50.000 = 0,40 = 40%."
+                },
+                {
+                    id: "l2_q4",
+                    question: "Qual a sintaxe correta da função lógica SE para aprovar um indicador se a célula A1 for maior ou igual a 70?",
+                    options: [
+                        "=SE(A1>=70; 'Aprovado'; 'Reprovado')",
+                        "=SE(A1=70; Aprovado; Reprovado)",
+                        "=SE.SE(A1>=70)",
+                        "=PROCV(A1; 70; 'Aprovado')"
+                    ],
+                    correct: 0,
+                    explanation: "Isso aí! A sintaxe do SE no Excel é: =SE(condição_lógica; valor_se_verdadeiro; valor_se_falso)."
+                }
+            ],
+            3: [
+                {
+                    id: "l3_q1",
+                    question: "O que caracteriza um KPI (Key Performance Indicator / Indicador-Chave de Desempenho)?",
+                    options: [
+                        "Qualquer planilha com mais de 100 linhas.",
+                        "Uma métrica quantitativa alinhada aos objetivos estratégicos da organização.",
+                        "Um software pago de envio de e-mails automáticos.",
+                        "A soma de todos os custos fixos da empresa."
+                    ],
+                    correct: 1,
+                    explanation: "Exato! KPIs são indicadores focados nas metas críticas do negócio, permitindo acompanhar o progresso e tomar decisões rapidamente."
+                },
+                {
+                    id: "l3_q2",
+                    question: "O aumento das vendas de sorvete e o aumento das queimaduras de praia ocorrem no mesmo período. Isso comprova que sorvete causa queimadura?",
+                    options: [
+                        "Sim, pois há causalidade direta.",
+                        "Não, trata-se de CORRELAÇÃO devido a uma variável comum (o Calor do Verão), e não de causalidade.",
+                        "Sim, pois dados quantitativos nunca mentem.",
+                        "Não, pois sorvetes não são vendidos no verão."
+                    ],
+                    correct: 1,
+                    explanation: "Brilhante! Correlação não significa Causalidade! Ambas as variáveis sobem no verão por conta do calor, mas um fato não causa o outro diretamente."
+                },
+                {
+                    id: "l3_q3",
+                    question: "Qual é a sequência lógica exata do Fio Condutor da UC de TGDQ para apoiar a gestão empresarial?",
+                    options: [
+                        "Ação &rarr; Decisão &rarr; Dado &rarr; Gráfico &rarr; Margem.",
+                        "Dado &rarr; Tratamento &rarr; Análise &rarr; Indicador &rarr; Interpretação &rarr; Decisão &rarr; Ação.",
+                        "Planilha &rarr; Corromper &rarr; Apagar &rarr; Relatório &rarr; Lucro.",
+                        "OLTP &rarr; OLAP &rarr; PROCV &rarr; SOMA &rarr; Fim."
+                    ],
+                    correct: 1,
+                    explanation: "Perfeito! Esse é o Fio Condutor do SENAI: transformamos DADOS brutos até gerar AÇÕES estratégicas eficientes!"
+                },
+                {
+                    id: "l3_boss",
+                    question: "🔥 CHEFÃO FINAL — ESTUDO DE CASO EXECUTIVO: A Empresa Alfa registrou queda de 25% na satisfação dos clientes. Dados do sistema mostram atrasos logísticos na entrega. Como o Assistente Administrativo deve agir usando o Fio Condutor?",
+                    options: [
+                        "Ignorar o relatório e sugerir dar desconto para todos os clientes sem analisar.",
+                        "Tratar e analisar a base de entregas, identificar a causa raiz das rotas atrasadas, apresentar o indicador em gráfico e propor um plano de ação na logística.",
+                        "Demitir a equipe inteira de atendimento sem conferir as fontes de dados.",
+                        "Alterar os números da pesquisa de satisfação para parecer tudo perfeito."
+                    ],
+                    correct: 1,
+                    explanation: "PARABÉNS! Você derrotou o MONSTRO DO RELATÓRIO CAÓTICO! Ao analisar dados reais e embasar a tomada de decisão com evidências, você se tornou um MESTRE DOS DADOS SENAI!"
+                }
+            ]
+        };
+
+        /* ==========================================================================
+           3. GAME ENGINE & STATE MANAGEMENT
+           ========================================================================== */
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let selectedAvatar = 'alex';
+        let gameState = 'START'; // START, PLAYING, QUIZ_PAUSE, GAME_OVER, WIN
+        let currentLevel = 1;
+        let score = 0;
+        let coins = 0;
+        let lives = 3;
+        let gameTimer = 300;
+        let timerInterval = null;
+        let gameLoopReq = null;
+
+        // Player properties
+        const player = {
+            x: 50,
+            y: 300,
+            width: 28,
+            height: 38,
+            vx: 0,
+            vy: 0,
+            speed: 4,
+            jumpForce: 11,
+            grounded: false,
+            facing: 'right',
+            animFrame: 0
+        };
+
+        // Camera Offset
+        let cameraX = 0;
+        const levelWidth = 2600;
+
+        // Keys pressed
+        const keys = { left: false, right: false, up: false };
+
+        // Level Entities
+        let platforms = [];
+        let questionBlocks = [];
+        let coinItems = [];
+        let enemies = [];
+        let bossEntity = null;
+        let goalPipe = null;
+
+        // Tracking Student Answers for Performance Report
+        let studentAnswers = [];
+
+        function selectAvatar(name) {
+            selectedAvatar = name;
+            document.querySelectorAll('.avatar-btn').forEach(btn => btn.classList.remove('border-yellow-400'));
+            if (name === 'alex') {
+                document.getElementById('btnAvatarAlex').classList.add('border-yellow-400');
+            } else {
+                document.getElementById('btnAvatarBeatriz').classList.add('border-yellow-400');
+            }
+        }
+
+        function toggleInstructionsModal(show) {
+            const modal = document.getElementById('instructionsModal');
+            modal.style.display = show ? 'flex' : 'none';
+        }
+
+        /* ==========================================================================
+           4. LEVEL GENERATOR & ENTITIES BUILDER
+           ========================================================================== */
+        function loadLevel(levelNum) {
+            currentLevel = levelNum;
+            player.x = 50;
+            player.y = 200;
+            player.vx = 0;
+            player.vy = 0;
+            cameraX = 0;
+
+            platforms = [];
+            questionBlocks = [];
+            coinItems = [];
+            enemies = [];
+            bossEntity = null;
+
+            // Ground floors
+            platforms.push({ x: 0, y: 390, width: 800, height: 60 });
+            platforms.push({ x: 880, y: 390, width: 700, height: 60 }); // Gap at 800-880
+            platforms.push({ x: 1650, y: 390, width: 950, height: 60 }); // Gap at 1580-1650
+
+            // Floating Brick Platforms & Question Blocks
+            const levelQuestions = quizData[levelNum];
+
+            if (levelNum === 1) {
+                // FASE 1 - SKY / REINO
+                document.getElementById('hudLevelName').innerText = "FASE 1: Reino dos Dados Brutos";
+                document.getElementById('hudLevelName').className = "text-emerald-400 font-semibold";
+
+                platforms.push({ x: 220, y: 280, width: 140, height: 24 });
+                questionBlocks.push({ x: 260, y: 180, width: 32, height: 32, qData: levelQuestions[0], hit: false });
+
+                platforms.push({ x: 500, y: 250, width: 120, height: 24 });
+                questionBlocks.push({ x: 540, y: 150, width: 32, height: 32, qData: levelQuestions[1], hit: false });
+
+                platforms.push({ x: 950, y: 270, width: 160, height: 24 });
+                questionBlocks.push({ x: 1010, y: 160, width: 32, height: 32, qData: levelQuestions[2], hit: false });
+
+                platforms.push({ x: 1350, y: 230, width: 140, height: 24 });
+                questionBlocks.push({ x: 1400, y: 130, width: 32, height: 32, qData: levelQuestions[3], hit: false });
+
+                // Enemies (Bugs)
+                enemies.push({ x: 400, y: 360, width: 30, height: 28, vx: -1.2, minX: 300, maxX: 600, alive: true });
+                enemies.push({ x: 1100, y: 360, width: 30, height: 28, vx: -1.5, minX: 900, maxX: 1300, alive: true });
+                enemies.push({ x: 1800, y: 360, width: 30, height: 28, vx: -1.8, minX: 1680, maxX: 2100, alive: true });
+
+            } else if (levelNum === 2) {
+                // FASE 2 - CAVERN / SPREADSHEETS
+                document.getElementById('hudLevelName').innerText = "FASE 2: Mina das Planilhas & Estatística";
+                document.getElementById('hudLevelName').className = "text-yellow-400 font-semibold";
+
+                platforms.push({ x: 200, y: 290, width: 120, height: 24 });
+                questionBlocks.push({ x: 240, y: 180, width: 32, height: 32, qData: levelQuestions[0], hit: false });
+
+                platforms.push({ x: 480, y: 230, width: 160, height: 24 });
+                questionBlocks.push({ x: 540, y: 130, width: 32, height: 32, qData: levelQuestions[1], hit: false });
+
+                platforms.push({ x: 920, y: 260, width: 140, height: 24 });
+                questionBlocks.push({ x: 970, y: 150, width: 32, height: 32, qData: levelQuestions[2], hit: false });
+
+                platforms.push({ x: 1300, y: 220, width: 150, height: 24 });
+                questionBlocks.push({ x: 1350, y: 120, width: 32, height: 32, qData: levelQuestions[3], hit: false });
+
+                // Enemies
+                enemies.push({ x: 450, y: 360, width: 30, height: 28, vx: -1.5, minX: 350, maxX: 650, alive: true });
+                enemies.push({ x: 1000, y: 360, width: 30, height: 28, vx: -1.8, minX: 880, maxX: 1200, alive: true });
+                enemies.push({ x: 1750, y: 360, width: 30, height: 28, vx: -2.0, minX: 1660, maxX: 2000, alive: true });
+
+            } else if (levelNum === 3) {
+                // FASE 3 - CASTLE / DASHBOARD & BOSS
+                document.getElementById('hudLevelName').innerText = "FASE 3: Castelo da Decisão Executiva";
+                document.getElementById('hudLevelName').className = "text-purple-400 font-semibold";
+
+                platforms.push({ x: 220, y: 280, width: 140, height: 24 });
+                questionBlocks.push({ x: 260, y: 170, width: 32, height: 32, qData: levelQuestions[0], hit: false });
+
+                platforms.push({ x: 550, y: 240, width: 140, height: 24 });
+                questionBlocks.push({ x: 600, y: 130, width: 32, height: 32, qData: levelQuestions[1], hit: false });
+
+                platforms.push({ x: 980, y: 260, width: 140, height: 24 });
+                questionBlocks.push({ x: 1030, y: 150, width: 32, height: 32, qData: levelQuestions[2], hit: false });
+
+                // Boss Entity at the end of Level 3
+                bossEntity = {
+                    x: 2100,
+                    y: 270,
+                    width: 90,
+                    height: 120,
+                    qData: levelQuestions[3],
+                    defeated: false
+                };
+
+                // Enemies
+                enemies.push({ x: 500, y: 360, width: 30, height: 28, vx: -2.0, minX: 350, maxX: 700, alive: true });
+                enemies.push({ x: 1100, y: 360, width: 30, height: 28, vx: -2.2, minX: 950, maxX: 1350, alive: true });
+            }
+
+            // Scatter Data Coins
+            for (let i = 150; i < 2300; i += 120) {
+                coinItems.push({ x: i, y: 340, width: 16, height: 20, collected: false });
+            }
+
+            // Goal Pipe / Portal at end
+            goalPipe = { x: 2400, y: 310, width: 50, height: 80 };
+        }
+
+        /* ==========================================================================
+           5. GAME CONTROLS & EVENT LISTENERS
+           ========================================================================== */
+        function setupControls() {
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') keys.left = true;
+                if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') keys.right = true;
+                if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W' || e.key === ' ') {
+                    if (!keys.up && player.grounded) {
+                        player.vy = -player.jumpForce;
+                        player.grounded = false;
+                        playSound('jump');
+                    }
+                    keys.up = true;
+                }
+            });
+
+            window.addEventListener('keyup', (e) => {
+                if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') keys.left = false;
+                if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') keys.right = false;
+                if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W' || e.key === ' ') keys.up = false;
+            });
+
+            // Virtual Touch Controls
+            const btnLeft = document.getElementById('btnLeft');
+            const btnRight = document.getElementById('btnRight');
+            const btnJump = document.getElementById('btnJump');
+
+            const bindTouch = (elem, keyName) => {
+                elem.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    if (keyName === 'up' && player.grounded) {
+                        player.vy = -player.jumpForce;
+                        player.grounded = false;
+                        playSound('jump');
+                    }
+                    keys[keyName] = true;
+                });
+                elem.addEventListener('touchend', (e) => {
+                    e.preventDefault();
+                    keys[keyName] = false;
+                });
+            };
+
+            bindTouch(btnLeft, 'left');
+            bindTouch(btnRight, 'right');
+            bindTouch(btnJump, 'up');
+        }
+
+        /* ==========================================================================
+           6. MAIN GAME LOOP & UPDATES
+           ========================================================================== */
+        function startGame() {
+            initAudio();
+            document.getElementById('startScreen').style.display = 'none';
+            score = 0;
+            coins = 0;
+            lives = 3;
+            gameTimer = 300;
+            studentAnswers = [];
+
+            updateHud();
+            loadLevel(1);
+            gameState = 'PLAYING';
+
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                if (gameState === 'PLAYING') {
+                    gameTimer--;
+                    document.getElementById('hudTimer').innerHTML = `<i class="fa-regular fa-clock"></i> ${gameTimer}s`;
+                    if (gameTimer <= 0) {
+                        handlePlayerDeath("Tempo Esgotado!");
+                    }
+                }
+            }, 1000);
+
+            if (gameLoopReq) cancelAnimationFrame(gameLoopReq);
+            gameLoop();
+        }
+
+        function updatePhysics() {
+            if (gameState !== 'PLAYING') return;
+
+            // Apply horizontal velocity
+            if (keys.left) {
+                player.vx = -player.speed;
+                player.facing = 'left';
+            } else if (keys.right) {
+                player.vx = player.speed;
+                player.facing = 'right';
+            } else {
+                player.vx *= 0.8; // Friction
+            }
+
+            // Gravity
+            player.vy += 0.55;
+
+            // Move X
+            player.x += player.vx;
+            // Prevent going back past left edge
+            if (player.x < 0) player.x = 0;
+
+            // Platform Collision X & Y
+            player.grounded = false;
+
+            platforms.forEach(plat => {
+                if (
+                    player.x < plat.x + plat.width &&
+                    player.x + player.width > plat.x &&
+                    player.y + player.height <= plat.y + 12 &&
+                    player.y + player.height + player.vy >= plat.y
+                ) {
+                    player.grounded = true;
+                    player.vy = 0;
+                    player.y = plat.y - player.height;
+                }
+            });
+
+            // Move Y
+            player.y += player.vy;
+
+            // Fall into pits
+            if (player.y > 450) {
+                handlePlayerDeath("Caiu na lacuna de dados!");
+                return;
+            }
+
+            // Question Blocks Collision (hitting from below)
+            questionBlocks.forEach(blk => {
+                if (
+                    player.x < blk.x + blk.width &&
+                    player.x + player.width > blk.x &&
+                    player.y <= blk.y + blk.height &&
+                    player.y + player.height >= blk.y
+                ) {
+                    // Hit underneath block
+                    if (player.vy < 0 && !blk.hit) {
+                        blk.hit = true;
+                        player.vy = 2; // Bounce back down
+                        triggerQuizModal(blk.qData);
+                    }
+                }
+            });
+
+            // Boss Entity Collision (Level 3)
+            if (bossEntity && !bossEntity.defeated) {
+                if (
+                    player.x + player.width >= bossEntity.x &&
+                    player.x <= bossEntity.x + bossEntity.width &&
+                    player.y + player.height >= bossEntity.y
+                ) {
+                    triggerQuizModal(bossEntity.qData, true);
+                }
+            }
+
+            // Data Coins Collection
+            coinItems.forEach(coin => {
+                if (!coin.collected &&
+                    player.x < coin.x + coin.width &&
+                    player.x + player.width > coin.x &&
+                    player.y < coin.y + coin.height &&
+                    player.y + player.height > coin.y
+                ) {
+                    coin.collected = true;
+                    coins++;
+                    score += 50;
+                    playSound('coin');
+                    updateHud();
+                }
+            });
+
+            // Enemy Logic & Collision
+            enemies.forEach(en => {
+                if (!en.alive) return;
+
+                en.x += en.vx;
+                if (en.x < en.minX || en.x > en.maxX) en.vx *= -1;
+
+                // Player collision with enemy
+                if (
+                    player.x < en.x + en.width &&
+                    player.x + player.width > en.x &&
+                    player.y < en.y + en.height &&
+                    player.y + player.height > en.y
+                ) {
+                    // Jumping on enemy top
+                    if (player.vy > 0 && player.y + player.height < en.y + 15) {
+                        en.alive = false;
+                        player.vy = -8;
+                        score += 150;
+                        playSound('stomp');
+                        updateHud();
+                    } else {
+                        handlePlayerDeath("Atingido por um Bug de Dados!");
+                    }
+                }
+            });
+
+            // Goal Pipe Collision
+            if (
+                goalPipe &&
+                player.x < goalPipe.x + goalPipe.width &&
+                player.x + player.width > goalPipe.x &&
+                player.y + player.height >= goalPipe.y
+            ) {
+                if (currentLevel < 3) {
+                    showNotification(`FASE ${currentLevel} CONCLUÍDA!`);
+                    playSound('correct');
+                    loadLevel(currentLevel + 1);
+                } else if (bossEntity && bossEntity.defeated) {
+                    finishGameWin();
+                } else {
+                    showNotification("Derrote o Monstro do Relatório Caótico antes de avançar!");
+                }
+            }
+
+            // Camera Following Player
+            cameraX = player.x - 200;
+            if (cameraX < 0) cameraX = 0;
+            if (cameraX > levelWidth - 800) cameraX = levelWidth - 800;
+        }
+
+        function handlePlayerDeath(reason) {
+            playSound('wrong');
+            lives--;
+            updateHud();
+
+            if (lives <= 0) {
+                gameState = 'GAME_OVER';
+                showNotification(`FIM DE JOGO: ${reason}`);
+                setTimeout(() => {
+                    openReportModal();
+                }, 1500);
+            } else {
+                showNotification(`Ops! ${reason} (-1 Vida)`);
+                player.x = Math.max(50, player.x - 200);
+                player.y = 200;
+                player.vx = 0;
+                player.vy = 0;
+            }
+        }
+
+        function updateHud() {
+            document.getElementById('hudLives').innerHTML = `<i class="fa-solid fa-heart"></i> x${lives}`;
+            document.getElementById('hudCoins').innerHTML = `<i class="fa-solid fa-coins"></i> ${coins < 10 ? '0' + coins : coins}`;
+            document.getElementById('hudScore').innerText = `PTS: ${score.toString().padStart(4, '0')}`;
+        }
+
+        function showNotification(msg) {
+            const notif = document.getElementById('gameNotification');
+            notif.innerText = msg;
+            notif.classList.remove('hidden');
+            setTimeout(() => {
+                notif.classList.add('hidden');
+            }, 2500);
+        }
+
+        /* ==========================================================================
+           7. RENDER ENGINE (CANVAS PIXEL ART DRAWING)
+           ========================================================================== */
+        function render() {
+            // Clear Background according to Level Theme
+            if (currentLevel === 1) {
+                ctx.fillStyle = '#5c94fc'; // Classic Sky Blue
+            } else if (currentLevel === 2) {
+                ctx.fillStyle = '#1e1b4b'; // Cavern Dark Blue
+            } else {
+                ctx.fillStyle = '#450a0a'; // Lava Castle Dark Red
+            }
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.save();
+            ctx.translate(-cameraX, 0);
+
+            // Draw Background Deco (Clouds/Mountains/Matrix)
+            drawLevelBackgroundDeco();
+
+            // Draw Platforms
+            platforms.forEach(plat => {
+                if (currentLevel === 1) {
+                    ctx.fillStyle = '#16a34a'; // Grass top
+                    ctx.fillRect(plat.x, plat.y, plat.width, 8);
+                    ctx.fillStyle = '#b45309'; // Dirt block
+                    ctx.fillRect(plat.x, plat.y + 8, plat.width, plat.height - 8);
+                } else if (currentLevel === 2) {
+                    ctx.fillStyle = '#0284c7'; // Spreadsheet header style
+                    ctx.fillRect(plat.x, plat.y, plat.width, 6);
+                    ctx.fillStyle = '#334155';
+                    ctx.fillRect(plat.x, plat.y + 6, plat.width, plat.height - 6);
+                } else {
+                    ctx.fillStyle = '#991b1b'; // Castle Brick
+                    ctx.fillRect(plat.x, plat.y, plat.width, plat.height);
+                }
+            });
+
+            // Draw Question Blocks (?)
+            questionBlocks.forEach(blk => {
+                ctx.fillStyle = blk.hit ? '#94a3b8' : '#eab308';
+                ctx.fillRect(blk.x, blk.y, blk.width, blk.height);
+                ctx.strokeStyle = '#000';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(blk.x, blk.y, blk.width, blk.height);
+
+                ctx.fillStyle = blk.hit ? '#475569' : '#000';
+                ctx.font = 'bold 16px "Press Start 2P"';
+                ctx.fillText('?', blk.x + 8, blk.y + 23);
+            });
+
+            // Draw Data Coins
+            coinItems.forEach(coin => {
+                if (!coin.collected) {
+                    ctx.fillStyle = '#facc15';
+                    ctx.beginPath();
+                    ctx.ellipse(coin.x + 8, coin.y + 10, 6, 9, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.strokeStyle = '#854d0e';
+                    ctx.stroke();
+                }
+            });
+
+            // Draw Enemies (Corrupted Data Bugs)
+            enemies.forEach(en => {
+                if (en.alive) {
+                    ctx.fillStyle = '#ef4444'; // Red Bug
+                    ctx.fillRect(en.x, en.y + 6, en.width, en.height - 6);
+                    // Bug Eyes
+                    ctx.fillStyle = '#fff';
+                    ctx.fillRect(en.x + 4, en.y + 10, 6, 6);
+                    ctx.fillRect(en.x + 18, en.y + 10, 6, 6);
+                    ctx.fillStyle = '#000';
+                    ctx.fillRect(en.x + 6, en.y + 12, 3, 3);
+                    ctx.fillRect(en.x + 20, en.y + 12, 3, 3);
+                }
+            });
+
+            // Draw Boss Entity (Level 3)
+            if (bossEntity && !bossEntity.defeated) {
+                ctx.fillStyle = '#dc2626';
+                ctx.fillRect(bossEntity.x, bossEntity.y, bossEntity.width, bossEntity.height);
+                ctx.strokeStyle = '#fef08a';
+                ctx.lineWidth = 4;
+                ctx.strokeRect(bossEntity.x, bossEntity.y, bossEntity.width, bossEntity.height);
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 10px "Press Start 2P"';
+                ctx.fillText('BOSS TGDQ', bossEntity.x + 5, bossEntity.y + 20);
+                ctx.fillText('RELATÓRIO', bossEntity.x + 5, bossEntity.y + 40);
+                ctx.fillText('CAÓTICO', bossEntity.x + 10, bossEntity.y + 60);
+            }
+
+            // Draw Goal Pipe / Portal
+            if (goalPipe) {
+                ctx.fillStyle = '#22c55e';
+                ctx.fillRect(goalPipe.x, goalPipe.y, goalPipe.width, goalPipe.height);
+                ctx.fillStyle = '#15803d';
+                ctx.fillRect(goalPipe.x - 4, goalPipe.y, goalPipe.width + 8, 16);
+            }
+
+            // Draw Player Character
+            drawPlayerSprite();
+
+            ctx.restore();
+        }
+
+        function drawLevelBackgroundDeco() {
+            if (currentLevel === 1) {
+                // Clouds
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.arc(300, 100, 25, 0, Math.PI * 2);
+                ctx.arc(330, 90, 30, 0, Math.PI * 2);
+                ctx.arc(360, 100, 25, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.beginPath();
+                ctx.arc(1100, 120, 25, 0, Math.PI * 2);
+                ctx.arc(1130, 110, 30, 0, Math.PI * 2);
+                ctx.fill();
+            } else if (currentLevel === 2) {
+                // Spreadsheet Grid Lines background
+                ctx.strokeStyle = '#312e81';
+                ctx.lineWidth = 1;
+                for (let x = 0; x < levelWidth; x += 60) {
+                    ctx.beginPath();
+                    ctx.moveTo(x, 0);
+                    ctx.lineTo(x, 450);
+                    ctx.stroke();
+                }
+            } else {
+                // Dashboard Charts background deco
+                ctx.fillStyle = 'rgba(239, 68, 68, 0.15)';
+                ctx.fillRect(200, 100, 120, 150);
+                ctx.fillRect(700, 80, 180, 180);
+            }
+        }
+
+        function drawPlayerSprite() {
+            ctx.save();
+            ctx.translate(player.x, player.y);
+
+            const isAlex = selectedAvatar === 'alex';
+
+            // Character Body
+            ctx.fillStyle = isAlex ? '#2563eb' : '#9333ea'; // Blue vs Purple Suit
+            ctx.fillRect(4, 12, 20, 18);
+
+            // Head / Skin
+            ctx.fillStyle = '#fde047';
+            ctx.fillRect(6, 2, 16, 12);
+
+            // Eyes
+            ctx.fillStyle = '#000';
+            if (player.facing === 'right') {
+                ctx.fillRect(16, 5, 3, 4);
+            } else {
+                ctx.fillRect(7, 5, 3, 4);
+            }
+
+            // Analyst HardHat / Glasses
+            ctx.fillStyle = '#eab308';
+            ctx.fillRect(4, 0, 20, 4);
+
+            // Legs
+            ctx.fillStyle = '#1e293b';
+            ctx.fillRect(6, 30, 6, 8);
+            ctx.fillRect(16, 30, 6, 8);
+
+            ctx.restore();
+        }
+
+        function gameLoop() {
+            updatePhysics();
+            render();
+            if (gameState === 'PLAYING') {
+                gameLoopReq = requestAnimationFrame(gameLoop);
+            }
+        }
+
+        /* ==========================================================================
+           8. INTERACTIVE QUIZ & CHALLENGE SYSTEM
+           ========================================================================== */
+        let activeQuiz = null;
+        let isBossQuizActive = false;
+
+        function triggerQuizModal(qData, isBoss = false) {
+            gameState = 'QUIZ_PAUSE';
+            activeQuiz = qData;
+            isBossQuizActive = isBoss;
+
+            document.getElementById('quizCategoryBadge').innerText = isBoss ? "🔥 DESAFIO DO CHEFÃO FINAL" : "DESAFIO CONCEITUAL TGDQ";
+            document.getElementById('quizLevelBadge').innerText = `FASE ${currentLevel}`;
+            document.getElementById('quizQuestionText').innerText = qData.question;
+
+            const optsContainer = document.getElementById('quizOptionsContainer');
+            optsContainer.innerHTML = '';
+            document.getElementById('quizFeedback').classList.add('hidden');
+
+            qData.options.forEach((optText, index) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl p-3 text-xs sm:text-sm font-medium transition flex items-center space-x-3";
+                btn.innerHTML = `
+                    <span class="w-6 h-6 rounded-full bg-slate-700 text-yellow-400 font-bold flex items-center justify-center text-xs border border-slate-600">${String.fromCharCode(65 + index)}</span>
+                    <span class="flex-1">${optText}</span>
+                `;
+                btn.onclick = () => submitQuizAnswer(index);
+                optsContainer.appendChild(btn);
+            });
+
+            document.getElementById('quizModal').style.display = 'flex';
+        }
+
+        function submitQuizAnswer(selectedIndex) {
+            const isCorrect = selectedIndex === activeQuiz.correct;
+            const feedbackBox = document.getElementById('quizFeedback');
+            const feedbackTitle = document.getElementById('quizFeedbackTitle');
+            const feedbackText = document.getElementById('quizFeedbackText');
+
+            // Log Student Answer for Report
+            studentAnswers.push({
+                level: currentLevel,
+                questionId: activeQuiz.id,
+                question: activeQuiz.question,
+                selectedOption: activeQuiz.options[selectedIndex],
+                isCorrect: isCorrect,
+                explanation: activeQuiz.explanation
+            });
+
+            if (isCorrect) {
+                score += isBossQuizActive ? 500 : 250;
+                playSound('correct');
+                feedbackBox.className = "rounded-xl p-4 text-xs sm:text-sm border bg-emerald-950/80 border-emerald-500 text-emerald-200";
+                feedbackTitle.innerText = "✓ RESPOSTA CORRETA (+ " + (isBossQuizActive ? 500 : 250) + " PTS)";
+                feedbackText.innerText = activeQuiz.explanation;
+
+                if (isBossQuizActive && bossEntity) {
+                    bossEntity.defeated = true;
+                }
+            } else {
+                playSound('wrong');
+                feedbackBox.className = "rounded-xl p-4 text-xs sm:text-sm border bg-red-950/80 border-red-500 text-red-200";
+                feedbackTitle.innerText = "✗ RESPOSTA INCORRETA";
+                feedbackText.innerText = activeQuiz.explanation;
+            }
+
+            feedbackBox.classList.remove('hidden');
+            document.getElementById('quizOptionsContainer').style.pointerEvents = 'none';
+            updateHud();
+        }
+
+        function closeQuizModal() {
+            document.getElementById('quizModal').style.display = 'none';
+            document.getElementById('quizOptionsContainer').style.pointerEvents = 'auto';
+
+            if (isBossQuizActive && bossEntity && bossEntity.defeated) {
+                finishGameWin();
+            } else {
+                gameState = 'PLAYING';
+                gameLoop();
+            }
+        }
+
+        /* ==========================================================================
+           9. GAME COMPLETION & REPORT GENERATION
+           ========================================================================== */
+        function finishGameWin() {
+            gameState = 'WIN';
+            playSound('correct');
+            showNotification("PARABÉNS! VOCÊ CONCLUIU O DESAFIO TGDQ!");
+            setTimeout(() => {
+                openReportModal();
+            }, 1000);
+        }
+
+        function openReportModal() {
+            document.getElementById('reportModal').style.display = 'flex';
+
+            // Calculate Metrics
+            const totalQuestions = studentAnswers.length;
+            const correctCount = studentAnswers.filter(a => a.isCorrect).length;
+            const accuracyPct = totalQuestions > 0 ? Math.round((correctCount / totalQuestions) * 100) : 0;
+            const timeElapsed = 300 - gameTimer;
+
+            document.getElementById('repTotalScore').innerText = score;
+            document.getElementById('repAccuracy').innerText = `${accuracyPct}%`;
+            document.getElementById('repCoins').innerText = coins;
+            document.getElementById('repTime').innerText = `${timeElapsed}s`;
+
+            // Performance per Module
+            const l1Count = studentAnswers.filter(a => a.level === 1 && a.isCorrect).length;
+            const l2Count = studentAnswers.filter(a => a.level === 2 && a.isCorrect).length;
+            const l3Count = studentAnswers.filter(a => a.level === 3 && a.isCorrect).length;
+
+            document.getElementById('mod1Perf').innerText = `${l1Count}/4 Acertos`;
+            document.getElementById('mod2Perf').innerText = `${l2Count}/4 Acertos`;
+            document.getElementById('mod3Perf').innerText = `${l3Count}/4 Acertos`;
+
+            // Certification Badge logic
+            const sealElem = document.getElementById('certificationSeal');
+            if (accuracyPct >= 80) {
+                sealElem.className = "bg-emerald-500 text-slate-950 font-pixel text-xs px-3 py-2 rounded-lg shadow font-bold text-center";
+                sealElem.innerText = "SELO OURO: MESTRE DOS DADOS SENAI";
+            } else if (accuracyPct >= 50) {
+                sealElem.className = "bg-amber-500 text-slate-950 font-pixel text-xs px-3 py-2 rounded-lg shadow font-bold text-center";
+                sealElem.innerText = "SELO PRATA: ANALISTA DE DADOS TGDQ";
+            } else {
+                sealElem.className = "bg-slate-700 text-slate-200 font-pixel text-xs px-3 py-2 rounded-lg shadow font-bold text-center";
+                sealElem.innerText = "SELO BRONZE: ASSISTENTE EM FORMAÇÃO";
+            }
+
+            // Question Log Injection
+            const logContainer = document.getElementById('repQuestionLog');
+            logContainer.innerHTML = '';
+
+            if (studentAnswers.length === 0) {
+                logContainer.innerHTML = "<p class='text-slate-400'>Nenhuma questão foi respondida nesta sessão.</p>";
+            } else {
+                studentAnswers.forEach((ans, idx) => {
+                    const item = document.createElement('div');
+                    item.className = `p-2.5 rounded-lg border ${ans.isCorrect ? 'bg-emerald-950/40 border-emerald-800/50' : 'bg-red-950/40 border-red-800/50'}`;
+                    item.innerHTML = `
+                        <div class="flex justify-between font-bold mb-1">
+                            <span>Questão ${idx + 1} (Fase ${ans.level})</span>
+                            <span class="${ans.isCorrect ? 'text-emerald-400' : 'text-red-400'}">${ans.isCorrect ? '✓ Correto' : '✗ Incorreto'}</span>
+                        </div>
+                        <p class="text-slate-300 mb-1"><strong>P:</strong> ${ans.question}</p>
+                        <p class="text-slate-400"><strong>Sua resposta:</strong> ${ans.selectedOption}</p>
+                    `;
+                    logContainer.appendChild(item);
+                });
+            }
+        }
+
+        function copyReportToClipboard() {
+            const studentName = document.getElementById('studentName').value || 'Aluno Não Identificado';
+            const studentClass = document.getElementById('studentClass').value || 'Turma SENAI';
+            const totalScore = document.getElementById('repTotalScore').innerText;
+            const accuracy = document.getElementById('repAccuracy').innerText;
+            const coinsVal = document.getElementById('repCoins').innerText;
+            const timeVal = document.getElementById('repTime').innerText;
+
+            let textReport = `====================================================\n`;
+            textReport += `RELATÓRIO DE DESEMPENHO EXECUTIVO - TGDQ SENAI\n`;
+            textReport += `====================================================\n`;
+            textReport += `Aluno: ${studentName}\n`;
+            textReport += `Turma/Unidade: ${studentClass}\n`;
+            textReport += `Data de Conclusão: ${new Date().toLocaleDateString('pt-BR')}\n`;
+            textReport += `----------------------------------------------------\n`;
+            textReport += `MÉTRICAS GERAIS:\n`;
+            textReport += `- Pontuação Final: ${totalScore} PTS\n`;
+            textReport += `- Taxa de Acerto: ${accuracy}\n`;
+            textReport += `- Moedas de Dados Coletadas: ${coinsVal}\n`;
+            textReport += `- Tempo Total de Jogo: ${timeVal}\n`;
+            textReport += `----------------------------------------------------\n`;
+            textReport += `DESEMPENHO POR MÓDULO:\n`;
+            textReport += `- Fase 1 (Fundamentos/OLTP/OLAP): ${document.getElementById('mod1Perf').innerText}\n`;
+            textReport += `- Fase 2 (Planilhas/PROCV/Estatística): ${document.getElementById('mod2Perf').innerText}\n`;
+            textReport += `- Fase 3 (KPIs/Castelo da Decisão): ${document.getElementById('mod3Perf').innerText}\n`;
+            textReport += `----------------------------------------------------\n`;
+            textReport += `CICLO FIO CONDUTOR CUMPRIDO:\n`;
+            textReport += `DADO -> TRATAMENTO -> ANÁLISE -> INDICADOR -> INTERPRETAÇÃO -> DECISÃO -> AÇÃO\n`;
+            textReport += `====================================================\n`;
+
+            navigator.clipboard.writeText(textReport).then(() => {
+                alert("Relatório formatado copiado para a área de transferência! Cole no Google Drive / Google Classroom do seu instrutor.");
+            }).catch(() => {
+                alert("Erro ao copiar automaticamente. Por favor, tire um print ou salve em PDF.");
+            });
+        }
+
+        function printReport() {
+            window.print();
+        }
+
+        function restartGameFull() {
+            document.getElementById('reportModal').style.display = 'none';
+            document.getElementById('startScreen').style.display = 'flex';
+            gameState = 'START';
+        }
+
+        // Initialize setup on window load
+        window.onload = function() {
+            setupControls();
+        };
+    </script>
+</body>
+</html>
